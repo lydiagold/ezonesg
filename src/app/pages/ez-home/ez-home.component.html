@@ -1,0 +1,249 @@
+<!-- ===== HERO ===== -->
+<section class="ez-hero">
+  <div class="ez-hero-bg"></div>
+  <div class="ez-hero-grid-pattern"></div>
+  <div class="container ez-hero-inner">
+
+    <div class="ez-hero-content">
+      <div class="ez-hero-badge">
+        <span class="badge-dot"></span>
+        Singapore Enterprise Technology Group
+      </div>
+      <h1 class="ez-hero-title">
+        Ezone <span class="ez-hero-title-accent">SG</span>
+      </h1>
+      <p class="ez-hero-tagline">
+        Enterprise Software &bull; Digital Commerce &bull; Technology Solutions
+      </p>
+      <p class="ez-hero-desc">
+        Building scalable software platforms, capital markets solutions, and enterprise technology services for modern businesses across Asia.
+      </p>
+      <div class="ez-hero-actions">
+        <a routerLink="/contact" class="btn btn-ez-gold btn-lg">Book a Consultation</a>
+        <a routerLink="/software" class="btn btn-ez-outline-white btn-lg">Explore Solutions</a>
+      </div>
+      <div class="ez-hero-stats">
+        <div class="ez-stat">
+          <span class="ez-stat-num">4+</span>
+          <span class="ez-stat-label">Platforms</span>
+        </div>
+        <div class="ez-stat-divider"></div>
+        <div class="ez-stat">
+          <span class="ez-stat-num">SG</span>
+          <span class="ez-stat-label">Incorporated</span>
+        </div>
+        <div class="ez-stat-divider"></div>
+        <div class="ez-stat">
+          <span class="ez-stat-num">360°</span>
+          <span class="ez-stat-label">Tech Partner</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code Window Visual -->
+    <div class="ez-hero-visual">
+      <div class="ez-code-card">
+        <div class="ez-code-header">
+          <div class="ez-code-dots">
+            <span class="code-dot dot-red"></span>
+            <span class="code-dot dot-yellow"></span>
+            <span class="code-dot dot-green"></span>
+          </div>
+          <span class="ez-code-filename">ezone-platform.ts</span>
+        </div>
+        <div class="ez-code-body">
+          <div class="code-line"><span class="code-kw">const</span> <span class="code-var">ezoneSG</span> <span class="code-op">=</span> <span class="code-brace">&#123;</span></div>
+          <div class="code-line code-indent"><span class="code-key">software</span><span class="code-op">:</span> <span class="code-str">'enterprise-grade'</span><span class="code-op">,</span></div>
+          <div class="code-line code-indent"><span class="code-key">platform</span><span class="code-op">:</span> <span class="code-str">'codify-fintech'</span><span class="code-op">,</span></div>
+          <div class="code-line code-indent"><span class="code-key">hardware</span><span class="code-op">:</span> <span class="code-str">'jk-infotech'</span><span class="code-op">,</span></div>
+          <div class="code-line code-indent"><span class="code-key">stack</span><span class="code-op">:</span> <span class="code-arr">[</span><span class="code-str">'Angular'</span><span class="code-op">,</span> <span class="code-str">'AWS'</span><span class="code-arr">]</span><span class="code-op">,</span></div>
+          <div class="code-line code-indent"><span class="code-key">location</span><span class="code-op">:</span> <span class="code-str">'Singapore'</span></div>
+          <div class="code-line"><span class="code-brace">&#125;</span></div>
+          <div class="code-line code-blank">&nbsp;</div>
+          <div class="code-line code-comment">// Building the future of enterprise tech</div>
+        </div>
+      </div>
+      <div class="ez-floating-badge ez-badge-a">
+        <span>⚙️</span> Angular · React
+      </div>
+      <div class="ez-floating-badge ez-badge-b">
+        <span>📈</span> FinTech
+      </div>
+      <div class="ez-floating-badge ez-badge-c">
+        <span>☁️</span> Cloud-Native
+      </div>
+    </div>
+
+  </div>
+  <!-- Wave -->
+  <div class="ez-hero-wave">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,0 C480,60 960,60 1440,0 L1440,60 L0,60 Z" fill="#F8FAFC"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ===== SOLUTIONS ===== -->
+<section class="section ez-solutions-section">
+  <div class="container">
+    <div class="ez-section-header">
+      <span class="ez-section-label">Our Solutions</span>
+      <h2>End-to-End Technology Solutions</h2>
+      <p>From enterprise software to hardware deployment — one group, multiple domains, unified by quality and delivery excellence.</p>
+    </div>
+    <div class="ez-solutions-grid">
+      @for (sol of solutions; track sol.title) {
+        <div class="ez-solution-card" [class]="'sol-' + sol.color">
+          <div class="sol-top">
+            <div class="sol-icon-wrap">
+              <span class="sol-icon">{{ sol.icon }}</span>
+            </div>
+            <span class="sol-badge">{{ sol.badge }}</span>
+          </div>
+          <h3>{{ sol.title }}</h3>
+          <p>{{ sol.desc }}</p>
+          <ul class="sol-features">
+            @for (f of sol.features; track f) {
+              <li>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                {{ f }}
+              </li>
+            }
+          </ul>
+          <a [routerLink]="sol.link" class="sol-cta">
+            {{ sol.ctaLabel }}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="section ez-about-section">
+  <div class="container ez-about-inner">
+
+    <div class="ez-about-content">
+      <span class="ez-section-label-gold">About Ezone SG</span>
+      <h2>Singapore's Enterprise Technology Group</h2>
+      <div class="ez-about-divider"></div>
+      <p>
+        Ezone SG is a Singapore-incorporated enterprise technology group focused on building and delivering
+        robust software platforms, digital commerce solutions, and technology services for modern businesses across Asia.
+      </p>
+      <p>
+        Our group spans enterprise software development, capital markets technology, and hardware solutions —
+        united by a commitment to engineering quality, delivery reliability, and long-term client partnership.
+      </p>
+      <ul class="ez-about-list">
+        @for (point of aboutPoints; track point) {
+          <li>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            {{ point }}
+          </li>
+        }
+      </ul>
+      <div class="ez-about-actions">
+        <a routerLink="/contact" class="btn btn-ez-primary btn-lg">Book a Consultation</a>
+        <a routerLink="/software" class="btn btn-ez-outline btn-lg">Explore Solutions</a>
+      </div>
+    </div>
+
+    <div class="ez-about-stats">
+      @for (stat of companyStats; track stat.label) {
+        <div class="ez-about-stat-card">
+          <div class="ez-about-stat-icon">{{ stat.icon }}</div>
+          <div class="ez-about-stat-num">{{ stat.num }}</div>
+          <div class="ez-about-stat-label">{{ stat.label }}</div>
+        </div>
+      }
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== TECH STACK ===== -->
+<section class="ez-tech-section">
+  <div class="container">
+    <div class="ez-section-header ez-section-header-light">
+      <span class="ez-section-label-white-sm">Technology Stack</span>
+      <h2>Built on Modern, Proven Technologies</h2>
+      <p>We leverage best-in-class technologies to deliver secure, scalable, and maintainable enterprise solutions.</p>
+    </div>
+    <div class="ez-tech-grid">
+      @for (tech of techStack; track tech.name) {
+        <div class="ez-tech-card">
+          <div class="ez-tech-icon">{{ tech.icon }}</div>
+          <div class="ez-tech-name">{{ tech.name }}</div>
+          <div class="ez-tech-tag">{{ tech.tag }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ===== ENTERPRISE CAPABILITIES ===== -->
+<section class="section ez-capabilities-section">
+  <div class="container">
+    <div class="ez-section-header">
+      <span class="ez-section-label">Enterprise Capabilities</span>
+      <h2>Built for Enterprise, Delivered for Results</h2>
+      <p>Security-first, cloud-native, and designed to scale with your business from day one.</p>
+    </div>
+    <div class="ez-capabilities-grid">
+      @for (cap of capabilities; track cap.title) {
+        <div class="ez-cap-card">
+          <div class="ez-cap-icon">{{ cap.icon }}</div>
+          <h4>{{ cap.title }}</h4>
+          <p>{{ cap.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT CTA ===== -->
+<section class="ez-cta-section">
+  <div class="ez-cta-bg"></div>
+  <div class="container ez-cta-inner">
+    <div class="ez-cta-content">
+      <span class="ez-section-label-white">Get Started</span>
+      <h2>Ready to Build Something Great?</h2>
+      <p>Tell us about your project. Our team will get back within 1 business day.</p>
+    </div>
+    <div class="ez-cta-info">
+      <a href="mailto:ezonesg@gmail.com" class="ez-cta-info-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        ezonesg&#64;gmail.com
+      </a>
+      <a href="tel:+6585306494" class="ez-cta-info-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.47 2 2 0 0 1 3.57 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/>
+        </svg>
+        +65 8530 6494
+      </a>
+      <div class="ez-cta-info-item no-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        1 Rochor Canal Rd, #03-24 Sim Lim Square, S188504
+      </div>
+    </div>
+    <div class="ez-cta-actions">
+      <a routerLink="/contact" class="btn btn-ez-gold btn-lg">Contact Us</a>
+      <a routerLink="/software" class="btn btn-ez-outline-white btn-lg">Explore Solutions</a>
+    </div>
+  </div>
+</section>

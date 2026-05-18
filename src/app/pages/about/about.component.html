@@ -1,0 +1,93 @@
+<!-- Hero -->
+<div class="about-hero">
+  <div class="container">
+    <span class="section-label">Our Story</span>
+    <h1>About OrchardRoots</h1>
+    <p>A Singapore-based brand built on a love for natural, wholesome food and the belief that healthy eating should be simple, delicious, and joyful.</p>
+  </div>
+</div>
+
+<!-- Story Section -->
+<section class="section story-section">
+  <div class="container story-inner">
+    <div class="story-content">
+      <span class="section-label-green">How It Started</span>
+      <h2>From a Passion for Healthy Living</h2>
+      <div class="divider"></div>
+      <p>
+        OrchardRoots was born from a simple belief: that the best snacks are the ones nature made.
+        Founded in Singapore, our brand is rooted in a deep appreciation for the world's finest nuts and dry fruits —
+        ingredients that have nourished families across cultures for thousands of years.
+      </p>
+      <p>
+        JK started this journey as a personal quest to find premium quality nuts that were truly fresh, natural, and free
+        from unnecessary additives. What began as a search for the perfect almond became a passion for sourcing the
+        world's finest nuts, dry fruits, and healthy snacks — and sharing that goodness with Singapore.
+      </p>
+      <p>
+        Today, OrchardRoots serves families, health enthusiasts, corporate offices, and gifting customers across Singapore.
+        Every product we offer is carefully selected, freshly packed, and delivered with the care and intention that defines who we are.
+      </p>
+      <a routerLink="/orchardroots/products" class="btn btn-primary">Explore Our Products</a>
+    </div>
+    <div class="story-visual">
+      <div class="story-img-wrap">
+        <img
+          src="assets/images/orchardroots-packaging.png"
+          alt="OrchardRoots Premium Packaging"
+          class="story-packaging-img"
+        />
+      </div>
+      <div class="story-stats">
+        @for (stat of stats; track stat.label) {
+          <div class="story-stat">
+            <span class="stat-n">{{ stat.num }}</span>
+            <span>{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Values -->
+<section class="section values-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">What We Stand For</span>
+      <h2>Our Core Values</h2>
+      <p>Everything we do is guided by a commitment to quality, community, and the natural world.</p>
+    </div>
+    <div class="values-grid">
+      @for (val of values; track val.title) {
+        <div class="value-card">
+          <div class="value-icon">{{ val.icon }}</div>
+          <h4>{{ val.title }}</h4>
+          <p>{{ val.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Mission -->
+<section class="mission-section">
+  <div class="container mission-inner">
+    <div class="mission-text">
+      <span class="section-label">Our Mission</span>
+      <h2>Bringing Natural Goodness to Every Home</h2>
+      <p>
+        Our mission is simple: to make premium, natural snacking accessible, affordable, and joyful for every family and office in Singapore.
+        We believe good health starts with good food, and good food starts with great ingredients.
+      </p>
+      <p>
+        From your everyday almond snack to a grand festive hamper, OrchardRoots is here to make every bite count.
+        Join our growing community of health-conscious families, wellness enthusiasts, and corporate partners across Singapore.
+      </p>
+      <div class="mission-actions">
+        <a routerLink="/orchardroots/products" class="btn btn-primary btn-lg">Shop Now</a>
+        <a routerLink="/orchardroots/corporate-gifting" class="btn btn-outline-green btn-lg">Corporate Gifting</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,55 @@
+<header class="ez-header" [class.scrolled]="isScrolled()">
+  <div class="container ez-header-inner">
+
+    <!-- Logo -->
+    <a routerLink="/" class="ez-logo" (click)="closeMenu()">
+      <div class="ez-logo-mark">
+        <span>E</span>
+      </div>
+      <div class="ez-logo-text">
+        <span class="ez-logo-name">Ezone SG</span>
+        <span class="ez-logo-sub">Enterprise Technology Group</span>
+      </div>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="ez-nav-desktop">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="ez-nav-link">Home</a>
+      <a routerLink="/software" routerLinkActive="active" class="ez-nav-link">Software</a>
+      <a routerLink="/codify" routerLinkActive="active" class="ez-nav-link">Codify</a>
+      <a routerLink="/laptops" routerLinkActive="active" class="ez-nav-link">Laptops</a>
+      <a routerLink="/contact" routerLinkActive="active" class="ez-nav-link">Contact</a>
+    </nav>
+
+    <!-- Actions -->
+    <div class="ez-header-actions">
+      <a routerLink="/contact" class="btn btn-ez-gold btn-sm desktop-only" (click)="closeMenu()">
+        Book a Consultation
+      </a>
+      <button
+        class="ez-hamburger"
+        [class.open]="isMenuOpen()"
+        (click)="toggleMenu()"
+        aria-label="Toggle menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Nav -->
+  <div class="ez-nav-mobile" [class.open]="isMenuOpen()">
+    <nav>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="ez-mobile-link" (click)="closeMenu()">Home</a>
+      <a routerLink="/software" routerLinkActive="active" class="ez-mobile-link" (click)="closeMenu()">Enterprise Software</a>
+      <a routerLink="/codify" routerLinkActive="active" class="ez-mobile-link" (click)="closeMenu()">Codify Platform</a>
+      <a routerLink="/laptops" routerLinkActive="active" class="ez-mobile-link" (click)="closeMenu()">Laptops & IT</a>
+      <a routerLink="/contact" routerLinkActive="active" class="ez-mobile-link" (click)="closeMenu()">Contact</a>
+      <a routerLink="/contact" class="btn btn-ez-gold mobile-cta" (click)="closeMenu()">
+        Book a Consultation
+      </a>
+    </nav>
+  </div>
+</header>

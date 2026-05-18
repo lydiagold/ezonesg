@@ -1,0 +1,81 @@
+<!-- Hero -->
+<section class="sw-hero">
+  <div class="sw-hero-pattern"></div>
+  <div class="container sw-hero-inner">
+    <div class="sw-hero-content">
+      <a routerLink="/" class="sw-breadcrumb">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Ezone SG
+      </a>
+      <span class="sw-label">Enterprise Software Development</span>
+      <h1>We Build Software That <span class="sw-accent">Works at Scale</span></h1>
+      <p>Custom Angular, React, cloud-native APIs, and AI-enabled applications — built for performance, security, and the demands of modern enterprise.</p>
+      <div class="sw-hero-actions">
+        <a routerLink="/contact" class="btn btn-ez-gold btn-lg">Book a Consultation</a>
+        <a routerLink="/codify" class="btn btn-ez-outline btn-lg">See Codify Platform</a>
+      </div>
+    </div>
+    <div class="sw-hero-tags">
+      @for (t of tech; track t) {
+        <span class="sw-tech-tag">{{ t }}</span>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="section sw-services">
+  <div class="container">
+    <div class="ez-section-header">
+      <span class="ez-section-label">What We Build</span>
+      <h2>Full-Stack Enterprise Development</h2>
+      <p>From user-facing applications to backend infrastructure — we cover the entire software stack.</p>
+    </div>
+    <div class="sw-services-grid">
+      @for (svc of services; track svc.title) {
+        <div class="sw-service-card">
+          <div class="sw-service-icon">{{ svc.icon }}</div>
+          <h4>{{ svc.title }}</h4>
+          <p>{{ svc.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section class="sw-process-section">
+  <div class="container">
+    <div class="ez-section-header">
+      <span class="ez-section-label">How We Work</span>
+      <h2>A Proven Delivery Process</h2>
+      <p>Structured, transparent, and built for zero surprises.</p>
+    </div>
+    <div class="sw-process-grid">
+      @for (step of process; track step.step) {
+        <div class="sw-process-step">
+          <div class="sw-step-num">{{ step.step }}</div>
+          <h4>{{ step.title }}</h4>
+          <p>{{ step.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="sw-cta">
+  <div class="container sw-cta-inner">
+    <div>
+      <h2>Have a Project in Mind?</h2>
+      <p>Let's scope it together. No commitment required for initial discussions.</p>
+    </div>
+    <div class="sw-cta-actions">
+      <a routerLink="/contact" class="btn btn-ez-gold btn-lg">Start a Conversation</a>
+      <a routerLink="/codify" class="btn btn-ez-outline-white btn-lg">View Codify Platform</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,103 @@
+<!-- Hero -->
+<section class="cd-hero">
+  <div class="cd-hero-pattern"></div>
+  <div class="container cd-hero-inner">
+    <div class="cd-hero-content">
+      <a routerLink="/" class="cd-breadcrumb">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Back to Ezone SG
+      </a>
+      <span class="cd-label">Capital Markets Platform</span>
+      <h1>Codify — <span class="cd-accent">Capital Markets</span> Platform</h1>
+      <p>End-to-end brokerage, trading, client onboarding, CRM, portfolio management, and wealthtech solutions built for financial institutions in Asia.</p>
+      <div class="cd-hero-actions">
+        <a routerLink="/contact" class="btn btn-ez-gold btn-lg">Request a Demo</a>
+        <a routerLink="/contact" class="btn btn-ez-outline-white btn-lg">Contact Sales</a>
+      </div>
+    </div>
+    <div class="cd-hero-visual">
+      <div class="cd-stat-card">
+        <div class="cd-stat-row">
+          <div class="cd-stat">
+            <div class="cd-stat-val">6+</div>
+            <div class="cd-stat-lbl">Core Modules</div>
+          </div>
+          <div class="cd-stat">
+            <div class="cd-stat-val">SG</div>
+            <div class="cd-stat-lbl">Regulated Markets</div>
+          </div>
+          <div class="cd-stat">
+            <div class="cd-stat-val">API</div>
+            <div class="cd-stat-lbl">Integration Ready</div>
+          </div>
+        </div>
+        <div class="cd-platform-tags">
+          <span>Brokerage</span>
+          <span>Trading</span>
+          <span>KYC/AML</span>
+          <span>Portfolio</span>
+          <span>Wealthtech</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modules -->
+<section class="section cd-modules">
+  <div class="container">
+    <div class="ez-section-header">
+      <span class="ez-section-label">Platform Modules</span>
+      <h2>Everything a Modern Brokerage Needs</h2>
+      <p>Modular by design — deploy the full suite or start with what matters most to your business.</p>
+    </div>
+    <div class="cd-modules-grid">
+      @for (mod of modules; track mod.title) {
+        <div class="cd-module-card">
+          <div class="cd-module-icon">{{ mod.icon }}</div>
+          <h4>{{ mod.title }}</h4>
+          <p>{{ mod.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Benefits -->
+<section class="cd-benefits-section">
+  <div class="container">
+    <div class="ez-section-header">
+      <span class="ez-section-label">Why Codify</span>
+      <h2>Built for Institutions, Ready for Scale</h2>
+      <p>Built with enterprise-grade architecture and workflows suitable for regulated financial environments — with support for auditability, operational controls, API integrations, and governance processes expected by Singapore financial institutions.</p>
+    </div>
+    <div class="cd-benefits-grid">
+      @for (b of benefits; track b.title) {
+        <div class="cd-benefit-card">
+          <div class="cd-benefit-icon">{{ b.icon }}</div>
+          <div>
+            <h4>{{ b.title }}</h4>
+            <p>{{ b.desc }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cd-cta">
+  <div class="container cd-cta-inner">
+    <div>
+      <h2>Ready to Modernise Your Platform?</h2>
+      <p>Schedule a demo with our team. We'll walk you through the modules relevant to your business.</p>
+    </div>
+    <div class="cd-cta-actions">
+      <a routerLink="/contact" class="btn btn-ez-gold btn-lg">Request a Demo</a>
+      <a routerLink="/software" class="btn btn-ez-outline-white btn-lg">Software Capabilities</a>
+    </div>
+  </div>
+</section>

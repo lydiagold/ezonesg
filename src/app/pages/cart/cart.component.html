@@ -1,0 +1,143 @@
+<!-- Header -->
+<div class="cart-page-header">
+  <div class="container">
+    <h1>Your Cart</h1>
+    @if (!isEmpty()) {
+      <p>{{ count() }} item{{ count() !== 1 ? 's' : '' }} in your cart</p>
+    }
+  </div>
+</div>
+
+<section class="section cart-section">
+  <div class="container">
+
+    @if (isEmpty()) {
+      <!-- Empty Cart -->
+      <div class="empty-cart">
+        <div class="empty-icon">🛒</div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything yet. Browse our premium nuts and dry fruits!</p>
+        <div class="empty-actions">
+          <a routerLink="/orchardroots/products" class="btn btn-primary btn-lg">Browse Products</a>
+          <a
+            href="https://wa.me/6596926272?text=Hello%20OrchardRoots!%20Can%20you%20help%20me%20choose%20a%20product?"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-whatsapp btn-lg"
+          >
+            Ask on WhatsApp
+          </a>
+        </div>
+      </div>
+    } @else {
+      <!-- Cart Content -->
+      <div class="cart-layout">
+
+        <!-- Cart Items -->
+        <div class="cart-items">
+          <div class="cart-items-header">
+            <span>Products</span>
+            <span>Qty</span>
+            <span>Subtotal</span>
+          </div>
+
+          @for (item of items(); track item.product.id) {
+            <div class="cart-item">
+              <div class="cart-item-img">
+                <img
+                  [src]="item.product.image"
+                  [alt]="item.product.name"
+                  (error)="onImageError($event, item.product.name)"
+                />
+              </div>
+              <div class="cart-item-info">
+                <div class="cart-item-category">{{ item.product.category }}</div>
+                <h4 class="cart-item-name">{{ item.product.name }}</h4>
+                <div class="cart-item-weight">{{ item.product.weight }}</div>
+                <div class="cart-item-price-mobile">SGD {{ item.product.price.toFixed(2) }} each</div>
+                <button class="remove-btn" (click)="remove(item.product.id)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
+                  Remove
+                </button>
+              </div>
+
+              <div class="cart-item-qty">
+                <button class="qty-btn" (click)="decrement(item.product.id, item.quantity)" [disabled]="item.quantity <= 1">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </button>
+                <span class="qty-val">{{ item.quantity }}</span>
+                <button class="qty-btn" (click)="increment(item.product.id, item.quantity)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="cart-item-subtotal">
+                SGD {{ (item.product.price * item.quantity).toFixed(2) }}
+              </div>
+            </div>
+          }
+
+          <div class="cart-actions-row">
+            <a routerLink="/orchardroots/products" class="btn btn-outline-green btn-sm">
+              ← Continue Shopping
+            </a>
+            <button class="btn btn-sm clear-btn" (click)="clearAll()">
+              Clear Cart
+            </button>
+          </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+          <h3>Order Summary</h3>
+
+          <div class="summary-lines">
+            @for (item of items(); track item.product.id) {
+              <div class="summary-line">
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                <span>SGD {{ (item.product.price * item.quantity).toFixed(2) }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-total-line">
+            <span>Total</span>
+            <span class="summary-total-amt">SGD {{ total().toFixed(2) }}</span>
+          </div>
+
+          <div class="delivery-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Delivery charges to be confirmed on WhatsApp
+          </div>
+
+          <button class="btn btn-whatsapp btn-lg checkout-btn" (click)="checkout()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+            Checkout via WhatsApp
+          </button>
+
+          <p class="checkout-note">
+            Clicking checkout will open WhatsApp with your order details. Our team will confirm your order and arrange delivery.
+          </p>
+        </div>
+
+      </div>
+    }
+
+  </div>
+</section>

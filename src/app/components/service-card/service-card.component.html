@@ -1,0 +1,24 @@
+<div class="service-card" [class]="'accent-' + accentColor">
+  <div class="card-accent-bar"></div>
+  <div class="card-top">
+    <div class="card-icon">{{ icon }}</div>
+    <span *ngIf="badge" class="card-badge">{{ badge }}</span>
+  </div>
+  <h3 class="card-title">{{ title }}</h3>
+  <p class="card-desc">{{ description }}</p>
+  <ul *ngIf="features.length" class="card-features">
+    <li *ngFor="let f of features">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ f }}
+    </li>
+  </ul>
+  <a [routerLink]="link" class="card-cta">
+    {{ ctaLabel }}
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  </a>
+</div>

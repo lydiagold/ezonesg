@@ -218,3 +218,9 @@ p { color: rgba(255,255,255,0.75); line-height: 1.75; margin-bottom: 2rem; }
   a { color: var(--ez-navy); font-weight: 500; transition: var(--transition-fast); }
   a:hover { color: var(--ez-gold); }
 }
+
+.lp-card-cta {
+  margin-top: 1.5rem;
+  width: 100%;
+  justify-content: center;
+}

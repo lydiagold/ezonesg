@@ -26,58 +26,24 @@
 .ez-logo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
   text-decoration: none;
   flex-shrink: 0;
-
-  &:hover .ez-logo-mark {
-    background: var(--ez-navy-mid);
-  }
-}
-
-.ez-logo-mark {
-  width: 40px;
-  height: 40px;
-  background: var(--ez-navy);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  opacity: 1;
   transition: var(--transition-fast);
 
-  span {
-    font-family: var(--font-heading);
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--ez-gold);
-    line-height: 1;
+  &:hover {
+    opacity: 0.85;
   }
 }
 
-.ez-logo-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.ez-logo-name {
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--ez-navy);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.ez-logo-sub {
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: var(--ez-text-muted);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+.ez-logo-img {
+  height: 40px;
+  width: auto;
+  display: block;
+  object-fit: contain;
 
   @media (max-width: 480px) {
-    display: none;
+    height: 34px;
   }
 }
 

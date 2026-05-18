@@ -25,37 +25,15 @@
 }
 
 .ez-footer-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
   margin-bottom: 1.25rem;
 }
 
-.ez-footer-logo-mark {
-  width: 40px;
-  height: 40px;
-  background: var(--ez-gold);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  span {
-    font-family: var(--font-heading);
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--ez-white);
-    line-height: 1;
-  }
-}
-
-.ez-footer-logo-name {
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--ez-white);
-  line-height: 1.1;
+.ez-footer-logo-img {
+  height: 38px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  opacity: 0.9;
 }
 
 .ez-footer-logo-tag {

@@ -56,6 +56,17 @@ resource "aws_apigatewayv2_route" "admin" {
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
 }
 
+# CORS preflight must NOT require auth: browsers send OPTIONS without the
+# Authorization header, so it would fail the JWT authorizer (401) and block every
+# admin request. This explicit OPTIONS route is more specific than the ANY route
+# above, so preflight is handled unauthenticated (the Lambda returns 204 + CORS).
+resource "aws_apigatewayv2_route" "admin_preflight" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "OPTIONS /api/admin/{proxy+}"
+  target             = "integrations/${aws_apigatewayv2_integration.api.id}"
+  authorization_type = "NONE"
+}
+
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http.id
   name        = "$default"

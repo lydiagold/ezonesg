@@ -1,0 +1,12 @@
+{
+  "name": "ezone-api",
+  "version": "1.0.0",
+  "description": "EZONE serverless API (products, categories, checkout, orders). Node 20 Lambda behind API Gateway HTTP API.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "seed": "node scripts/seed.js",
+    "check": "node --check src/index.js"
+  },
+  "comment": "AWS SDK v3 (@aws-sdk/*) is preinstalled in the Lambda Node 20 runtime, so it is intentionally NOT vendored here. Install locally only to run the seed script: npm i @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb"
+}

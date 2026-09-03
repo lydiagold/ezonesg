@@ -2,6 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script>
+      // amazon-cognito-identity-js and its bundled deps (buffer, sha256-js)
+      // reference Node's `global`, which does not exist in browsers. Define it
+      // before any app module loads so the admin auth code runs. Must stay in
+      // <head> and run before the bundled scripts.
+      window.global = window;
+    </script>
     <title>EZONE | Electronics Store Singapore</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

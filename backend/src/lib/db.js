@@ -17,4 +17,5 @@ export const TABLES = {
   orders: process.env.ORDERS_TABLE,
   payments: process.env.PAYMENTS_TABLE,
   settings: process.env.SETTINGS_TABLE,
+  audit: process.env.AUDIT_TABLE,
 };

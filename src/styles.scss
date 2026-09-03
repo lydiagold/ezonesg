@@ -222,3 +222,123 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 }
+
+/* =============================================================================
+   ADMIN (Phase 3) — compact, white, brand-matched. Reuses the tokens above.
+   Not a generic Bootstrap dashboard: restrained shadows, small cards, clean
+   tables. Scoped under .admin so storefront pages are unaffected.
+   ============================================================================= */
+.admin {
+  --admin-sidebar-w: 232px;
+  min-height: 100vh;
+  background: var(--ez-surface-muted);
+  color: var(--ez-text);
+}
+.admin__shell { display: grid; grid-template-columns: var(--admin-sidebar-w) 1fr; min-height: 100vh; }
+
+.admin-sidebar {
+  background: var(--ez-surface);
+  border-right: 1px solid var(--ez-border);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.admin-sidebar__brand { display: flex; align-items: center; gap: 0.6rem; padding: 1.1rem 1.1rem; font-family: var(--ez-font-display); font-weight: 800; letter-spacing: -0.02em; }
+.admin-sidebar__brand img { height: 24px; width: auto; }
+.admin-sidebar__group { padding: 0.5rem 0.75rem; }
+.admin-sidebar__group h4 { font-family: var(--ez-font); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ez-text-muted); font-weight: 700; margin: 0.75rem 0.5rem 0.35rem; }
+.admin-nav-link {
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.65rem; border-radius: var(--ez-radius-sm);
+  color: var(--ez-text-muted); font-size: 0.9rem; font-weight: 500;
+}
+.admin-nav-link:hover { background: var(--ez-surface-muted); color: var(--ez-text); }
+.admin-nav-link.active { background: var(--ez-primary-soft); color: var(--ez-primary-strong); font-weight: 600; }
+.admin-sidebar__foot { margin-top: auto; padding: 0.75rem; border-top: 1px solid var(--ez-border); }
+
+.admin-main { display: flex; flex-direction: column; min-width: 0; }
+.admin-topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0.85rem 1.5rem; background: var(--ez-surface); border-bottom: 1px solid var(--ez-border);
+  position: sticky; top: 0; z-index: 5;
+}
+.admin-topbar__title { font-family: var(--ez-font-display); font-size: 1.15rem; font-weight: 700; }
+.admin-topbar__user { display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--ez-text-muted); }
+.admin-content { padding: 1.5rem; max-width: 1200px; width: 100%; }
+
+.admin-burger { display: none; }
+
+/* Page header row */
+.admin-page-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.admin-page-head h1 { font-size: 1.5rem; }
+.admin-page-head p { color: var(--ez-text-muted); margin-top: 0.2rem; }
+
+/* Cards / panels */
+.admin-panel { background: var(--ez-surface); border: 1px solid var(--ez-border); border-radius: var(--ez-radius-md); box-shadow: var(--ez-shadow-sm); }
+.admin-panel__head { padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--ez-border); font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.admin-panel__body { padding: 1.1rem; }
+
+/* Stat tiles (small, not giant) */
+.admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.85rem; margin-bottom: 1.25rem; }
+.admin-stat { background: var(--ez-surface); border: 1px solid var(--ez-border); border-radius: var(--ez-radius-md); padding: 0.9rem 1rem; box-shadow: var(--ez-shadow-sm); }
+.admin-stat__label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ez-text-muted); font-weight: 700; }
+.admin-stat__value { font-family: var(--ez-font-display); font-size: 1.6rem; font-weight: 800; margin-top: 0.15rem; }
+
+/* Tables */
+.admin-table-wrap { overflow-x: auto; border: 1px solid var(--ez-border); border-radius: var(--ez-radius-md); background: var(--ez-surface); }
+table.admin-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.admin-table th { text-align: left; font-weight: 600; color: var(--ez-text-muted); padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--ez-border); white-space: nowrap; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.admin-table td { padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--ez-border); vertical-align: middle; }
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tbody tr:hover { background: var(--ez-surface-muted); }
+.admin-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Forms grid */
+.admin-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.1rem; }
+.admin-form-grid .col-span-2 { grid-column: 1 / -1; }
+@media (max-width: 720px) { .admin-form-grid { grid-template-columns: 1fr; } }
+
+/* Toolbar / filters */
+.admin-toolbar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+.admin-toolbar .input, .admin-toolbar .select { width: auto; min-width: 180px; }
+.admin-spacer { flex: 1; }
+
+/* Toast / inline messages */
+.admin-alert { padding: 0.7rem 0.9rem; border-radius: var(--ez-radius-sm); font-size: 0.88rem; margin-bottom: 1rem; }
+.admin-alert.ok { background: var(--ez-success-soft); color: var(--ez-success); }
+.admin-alert.err { background: var(--ez-danger-soft); color: var(--ez-danger); }
+.admin-empty { text-align: center; color: var(--ez-text-muted); padding: 2.5rem 1rem; }
+
+/* Tabs */
+.admin-tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--ez-border); margin-bottom: 1.25rem; flex-wrap: wrap; }
+.admin-tab { padding: 0.55rem 0.9rem; font-weight: 600; font-size: 0.9rem; color: var(--ez-text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.admin-tab.active { color: var(--ez-primary-strong); border-bottom-color: var(--ez-primary); }
+
+/* Toggle switch */
+.admin-switch { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; }
+.admin-switch input { position: absolute; opacity: 0; }
+.admin-switch .track { width: 38px; height: 22px; border-radius: 999px; background: var(--ez-border-strong); position: relative; transition: background var(--ez-transition); flex: none; }
+.admin-switch .track::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform var(--ez-transition); box-shadow: var(--ez-shadow-sm); }
+.admin-switch input:checked + .track { background: var(--ez-primary); }
+.admin-switch input:checked + .track::after { transform: translateX(16px); }
+
+/* Login screen */
+.admin-login { min-height: 100vh; display: grid; place-items: center; background: var(--ez-surface-muted); padding: 1.5rem; }
+.admin-login__card { width: min(100%, 400px); background: var(--ez-surface); border: 1px solid var(--ez-border); border-radius: var(--ez-radius-lg); box-shadow: var(--ez-shadow-md); padding: 1.75rem; }
+.admin-login__brand { display: flex; align-items: center; gap: 0.6rem; justify-content: center; margin-bottom: 0.35rem; font-family: var(--ez-font-display); font-weight: 800; font-size: 1.25rem; }
+.admin-login__brand img { height: 28px; }
+
+.admin-row-actions { display: flex; gap: 0.4rem; justify-content: flex-end; }
+.btn-sm { padding: 0.4rem 0.7rem; font-size: 0.82rem; }
+.btn-danger { background: var(--ez-danger); color: #fff; }
+.btn-danger:hover { background: #a82a24; }
+
+/* Responsive: collapse sidebar under a drawer on small screens */
+@media (max-width: 860px) {
+  .admin__shell { grid-template-columns: 1fr; }
+  .admin-sidebar {
+    position: fixed; z-index: 30; width: var(--admin-sidebar-w); transform: translateX(-100%);
+    transition: transform var(--ez-transition); box-shadow: var(--ez-shadow-lg);
+  }
+  .admin.nav-open .admin-sidebar { transform: translateX(0); }
+  .admin-burger { display: inline-flex; }
+  .admin-scrim { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 20; }
+}

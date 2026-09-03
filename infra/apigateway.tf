@@ -9,7 +9,7 @@ resource "aws_apigatewayv2_api" "http" {
 
   cors_configuration {
     allow_origins = local.cors_origins
-    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     allow_headers = ["content-type", "authorization"]
     max_age       = 3000
   }
@@ -22,10 +22,38 @@ resource "aws_apigatewayv2_integration" "api" {
   payload_format_version = "2.0"
 }
 
+# Public storefront routes — unauthenticated.
 resource "aws_apigatewayv2_route" "proxy" {
   api_id    = aws_apigatewayv2_api.http.id
   route_key = "ANY /api/{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.api.id}"
+}
+
+# -----------------------------------------------------------------------------
+# JWT authorizer — validates Cognito access tokens for /api/admin/*. API Gateway
+# rejects unauthenticated/invalid tokens BEFORE the Lambda runs; the Lambda then
+# additionally checks the MASTER_ADMIN group claim (defence in depth).
+# -----------------------------------------------------------------------------
+resource "aws_apigatewayv2_authorizer" "cognito" {
+  api_id           = aws_apigatewayv2_api.http.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "${local.name}-cognito-${local.suffix}"
+
+  jwt_configuration {
+    audience = [aws_cognito_user_pool_client.admin_web.id]
+    issuer   = "https://cognito-idp.${var.aws_region}.amazonaws.com/${aws_cognito_user_pool.admin.id}"
+  }
+}
+
+# Authenticated admin routes. More specific than ANY /api/{proxy+}, so admin
+# requests match this (authorized) route rather than the public proxy.
+resource "aws_apigatewayv2_route" "admin" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "ANY /api/admin/{proxy+}"
+  target             = "integrations/${aws_apigatewayv2_integration.api.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
 }
 
 resource "aws_apigatewayv2_stage" "default" {
@@ -52,7 +80,7 @@ resource "aws_apigatewayv2_stage" "default" {
 
 resource "aws_cloudwatch_log_group" "api_access" {
   name              = "/aws/apigateway/${local.name}-api-${local.suffix}"
-  retention_in_days = 14
+  retention_in_days = var.log_retention_days
 }
 
 resource "aws_lambda_permission" "apigw" {

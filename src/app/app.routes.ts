@@ -3,9 +3,14 @@ import { EzoneLayoutComponent } from './layouts/ezone-layout/ezone-layout.compon
 
 /**
  * EZONE storefront routes. All public pages render inside the storefront layout
- * (header + footer). Admin routes (/admin/*) are introduced in Phase 3.
+ * (header + footer). The /admin area (Phase 3) has its own layout and is lazy
+ * loaded so its code never ships to storefront visitors.
  */
 export const routes: Routes = [
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES),
+  },
   {
     path: '',
     component: EzoneLayoutComponent,

@@ -19,6 +19,8 @@ export interface ProductVariant {
   /** Overrides the parent product price when set. */
   priceOverride?: number;
   stockQuantity: number;
+  /** Admin low-stock warning threshold (defaults to 3 server-side). */
+  lowStockThreshold?: number;
   active: boolean;
 }
 
@@ -61,6 +63,12 @@ export interface Product {
 
   featured: boolean;
   active: boolean;
+  /** Soft-deleted from the catalogue but retained for order history (admin). */
+  archived?: boolean;
+
+  /** Optional SEO overrides (admin-managed). */
+  seoTitle?: string;
+  seoDescription?: string;
 
   createdAt: string;
   updatedAt: string;

@@ -1,56 +1,66 @@
 <!-- Hero -->
-<section class="hero">
-  <div class="ez-container hero-inner">
-    <div class="hero-copy">
-      <span class="badge badge-accent">New · iPhone Series</span>
-      <h1>Singapore electronics,<br />made simple.</h1>
-      <p>Genuine phones, EZONE tablets and everyday tech.</p>
-      <div class="hero-cta">
-        <a class="btn btn-primary btn-lg" routerLink="/shop/phones">Shop iPhones</a>
-        <a class="btn btn-outline btn-lg" routerLink="/shop/tablets">Shop Tablets</a>
+@if (isSectionActive('hero') && cfg().hero.active) {
+  <section class="hero">
+    <div class="ez-container hero-inner">
+      <div class="hero-copy">
+        <span class="badge badge-accent">{{ cfg().hero.eyebrow }}</span>
+        <h1>{{ cfg().hero.heading }}</h1>
+        <p>{{ cfg().hero.description }}</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" [routerLink]="cfg().hero.primaryUrl">{{ cfg().hero.primaryLabel }}</a>
+          <a class="btn btn-outline btn-lg" [routerLink]="cfg().hero.secondaryUrl">{{ cfg().hero.secondaryLabel }}</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        @if (cfg().hero.desktopImageUrl) {
+          <div class="hv-card hv-lg"><img [src]="cfg().hero.desktopImageUrl" alt="" /></div>
+        } @else {
+          <div class="hv-card hv-lg"><img src="assets/images/seed/phone.svg" alt="" /></div>
+          <div class="hv-card"><img src="assets/images/seed/tablet.svg" alt="" /></div>
+          <div class="hv-card"><img src="assets/images/seed/accessory.svg" alt="" /></div>
+        }
       </div>
     </div>
-    <div class="hero-visual" aria-hidden="true">
-      <div class="hv-card hv-lg"><img src="assets/images/seed/phone.svg" alt="" /></div>
-      <div class="hv-card"><img src="assets/images/seed/tablet.svg" alt="" /></div>
-      <div class="hv-card"><img src="assets/images/seed/accessory.svg" alt="" /></div>
-    </div>
-  </div>
-</section>
+  </section>
+}
 
 <!-- Category cards -->
-<section class="section">
-  <div class="ez-container">
-    <div class="section-head"><h2>Shop by category</h2></div>
-    <div class="cat-cards">
-      @for (c of categories; track c.slug) {
-        <a class="cat-card" [routerLink]="c.route">
-          <div class="cat-img"><img [src]="categoryImages[c.slug]" [alt]="c.name" /></div>
-          <div class="cat-meta">
-            <h3>{{ c.name }}</h3>
-            <p class="muted">{{ c.tagline }}</p>
-            <span class="cat-link">Shop {{ c.name }} →</span>
-          </div>
-        </a>
-      }
+@if (isSectionActive('categoryCards') && cfg().categoryCards.active) {
+  <section class="section">
+    <div class="ez-container">
+      <div class="section-head"><h2>{{ cfg().categoryCards.heading }}</h2></div>
+      <div class="cat-cards">
+        @for (c of activeCards(); track c.url) {
+          <a class="cat-card" [routerLink]="c.url">
+            <div class="cat-img"><img [src]="c.imageUrl || cardImage(c.url)" [alt]="c.title" /></div>
+            <div class="cat-meta">
+              <h3>{{ c.title }}</h3>
+              <p class="muted">{{ c.subtitle }}</p>
+              <span class="cat-link">Shop {{ c.title }} →</span>
+            </div>
+          </a>
+        }
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+}
 
 <!-- Featured products -->
-<section class="section featured">
-  <div class="ez-container">
-    <div class="section-head row">
-      <div><h2>Featured</h2><p>Popular picks right now.</p></div>
-      <a class="btn btn-ghost" routerLink="/shop">View all →</a>
+@if (isSectionActive('featured') && cfg().featured.active) {
+  <section class="section featured">
+    <div class="ez-container">
+      <div class="section-head row">
+        <div><h2>{{ cfg().featured.heading }}</h2><p>{{ cfg().featured.description }}</p></div>
+        <a class="btn btn-ghost" routerLink="/shop">View all →</a>
+      </div>
+      <div class="product-grid">
+        @for (p of featured(); track p.id) {
+          <app-product-card [product]="p" />
+        }
+      </div>
     </div>
-    <div class="product-grid">
-      @for (p of featured(); track p.id) {
-        <app-product-card [product]="p" />
-      }
-    </div>
-  </div>
-</section>
+  </section>
+}
 
 <!-- Promotional banner (only if delivery promo is configured) -->
 @if (freeDeliveryText()) {
@@ -66,32 +76,38 @@
 }
 
 <!-- Why shop with EZONE -->
-<section class="section">
-  <div class="ez-container">
-    <div class="section-head"><h2>Why shop with EZONE</h2></div>
-    <div class="reasons">
-      @for (r of reasons; track r.title) {
-        <div class="reason card">
-          <h3>{{ r.title }}</h3>
-          <p class="muted">{{ r.desc }}</p>
-        </div>
-      }
+@if (isSectionActive('whyShop') && cfg().whyShop.active) {
+  <section class="section">
+    <div class="ez-container">
+      <div class="section-head"><h2>{{ cfg().whyShop.heading }}</h2></div>
+      <div class="reasons">
+        @for (r of activeReasons(); track r.title) {
+          <div class="reason card">
+            <h3>{{ r.title }}</h3>
+            <p class="muted">{{ r.description }}</p>
+          </div>
+        }
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+}
 
 <!-- Contact CTA -->
-<section class="ez-container">
-  <div class="cta">
-    <div>
-      <h2>Questions before you buy?</h2>
-      <p>Reach out and we'll help you pick the right device.</p>
+@if (isSectionActive('contactCta') && cfg().contactCta.active) {
+  <section class="ez-container">
+    <div class="cta">
+      <div>
+        <h2>{{ cfg().contactCta.heading }}</h2>
+        <p>{{ cfg().contactCta.description }}</p>
+      </div>
+      <div class="cta-actions">
+        @if (whatsapp && cfg().contactCta.whatsappEnabled) {
+          <a class="btn btn-primary btn-lg" [href]="whatsapp" target="_blank" rel="noopener">WhatsApp us</a>
+        }
+        @if (cfg().contactCta.contactEnabled) {
+          <a class="btn btn-outline btn-lg" routerLink="/contact">Contact</a>
+        }
+      </div>
     </div>
-    <div class="cta-actions">
-      @if (whatsapp) {
-        <a class="btn btn-primary btn-lg" [href]="whatsapp" target="_blank" rel="noopener">WhatsApp us</a>
-      }
-      <a class="btn btn-outline btn-lg" routerLink="/contact">Contact</a>
-    </div>
-  </div>
-</section>
+  </section>
+}

@@ -1,13 +1,22 @@
 import { GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { ddb, TABLES } from '../lib/db.js';
 import { created, HttpError, parseBody } from '../lib/http.js';
+import { getConfig, DEFAULT_DELIVERY } from '../lib/store.js';
 
-const DELIVERY_FEE = 8;
-const FREE_DELIVERY_THRESHOLD = 500;
+// Delivery fee + free-delivery threshold are admin-configurable (settings table);
+// fall back to sensible defaults if never set. Read server-side and never trusted
+// from the client.
+async function deliveryRules() {
+  const d = (await getConfig('delivery')) ?? DEFAULT_DELIVERY;
+  return {
+    fee: Number(d.standardDeliveryFee ?? DEFAULT_DELIVERY.standardDeliveryFee),
+    threshold: Number(d.freeDeliveryThreshold ?? DEFAULT_DELIVERY.freeDeliveryThreshold),
+  };
+}
 
-function deliveryFeeFor(subtotal) {
+function deliveryFeeFor(subtotal, rules) {
   if (subtotal <= 0) return 0;
-  return subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+  return subtotal >= rules.threshold ? 0 : rules.fee;
 }
 
 function effectiveUnitPrice(product, variant) {
@@ -79,7 +88,7 @@ export async function checkout(event, storefrontOrigin) {
 
   const subtotal = orderItems.reduce((s, i) => s + i.lineTotal, 0);
   const discount = 0;
-  const deliveryFee = deliveryFeeFor(subtotal);
+  const deliveryFee = deliveryFeeFor(subtotal, await deliveryRules());
   const total = subtotal - discount + deliveryFee;
 
   const orderReference = await nextOrderReference();

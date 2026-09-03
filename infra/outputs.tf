@@ -19,10 +19,29 @@ output "dynamodb_tables" {
   }
 }
 
-output "hitpay_secret_arns" {
-  description = "Secrets Manager ARNs to populate with HitPay sandbox credentials."
+output "hitpay_secret" {
+  description = "Secrets Manager secret (JSON: apiKey + webhookSalt) to populate with HitPay sandbox credentials."
   value = {
-    api_key      = aws_secretsmanager_secret.hitpay_api_key.arn
-    webhook_salt = aws_secretsmanager_secret.hitpay_webhook_salt.arn
+    name = aws_secretsmanager_secret.hitpay.name
+    arn  = aws_secretsmanager_secret.hitpay.arn
   }
+}
+
+# -----------------------------------------------------------------------------
+# Cognito — copy these into src/environments/environment(.prod).ts (cognito block)
+# so the Angular admin SPA can authenticate. None of these are secrets.
+# -----------------------------------------------------------------------------
+output "cognito" {
+  description = "Cognito config for the Angular admin app (public values)."
+  value = {
+    region        = var.aws_region
+    user_pool_id  = aws_cognito_user_pool.admin.id
+    web_client_id = aws_cognito_user_pool_client.admin_web.id
+    group         = aws_cognito_user_group.master_admin.name
+  }
+}
+
+output "audit_table" {
+  description = "Audit log DynamoDB table name."
+  value       = aws_dynamodb_table.audit.name
 }

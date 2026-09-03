@@ -6,3 +6,12 @@ storefront_origin = "https://ezone.sg"
 extra_cors_origins = [
   "http://localhost:4200",
 ]
+
+# Initial MASTER_ADMIN email. Cognito emails a temporary password on apply;
+# first login forces a password change. Leave "" to create the admin later with
+# scripts/create-dev-admin. NEVER put a password here.
+admin_email = "admin@ezone.sg"
+
+# Optional cost/size knobs (defaults shown).
+# log_retention_days = 14
+# max_upload_bytes   = 5242880

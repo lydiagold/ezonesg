@@ -10,8 +10,8 @@
       <span class="bars" [class.open]="menuOpen()"><span></span><span></span><span></span></span>
     </button>
 
-    <a class="brand" routerLink="/" (click)="closeMenu()" aria-label="EZONE home">
-      {{ brand }}
+    <a class="brand" routerLink="/" (click)="closeMenu()" [attr.aria-label]="brand + ' home'">
+      <img class="brand-logo" src="assets/images/ezone-logo.png" [alt]="brand" />
     </a>
 
     <nav class="nav" aria-label="Primary">

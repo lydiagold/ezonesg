@@ -17,11 +17,14 @@
 }
 
 .brand {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.35rem;
-  letter-spacing: 0.02em;
-  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+}
+.brand-logo {
+  display: block;
+  height: calc(var(--header-h) * 0.55);
+  width: auto;
+  max-height: 40px;
 }
 
 .nav {

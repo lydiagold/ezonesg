@@ -1,5 +1,19 @@
 :host { display: block; }
 
+.cart-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--ez-primary-soft);
+  color: var(--ez-primary-strong);
+  border: 1px solid var(--ez-primary-border);
+  border-radius: var(--ez-radius-sm);
+  padding: 0.55rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
 .cart-layout { display: grid; grid-template-columns: 1fr 340px; gap: 2rem; align-items: start; }
 
 .cart-row {

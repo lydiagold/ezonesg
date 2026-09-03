@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
+import { CartDraftService } from '../../services/cart-draft.service';
+import { CustomerIdentityService } from '../../services/customer-identity.service';
 import { SeoService } from '../../services/seo.service';
 import { CartItem, lineTotal } from '../../models/cart-item.model';
 
@@ -14,6 +16,8 @@ import { CartItem, lineTotal } from '../../models/cart-item.model';
 })
 export class CartComponent implements OnInit {
   readonly cart = inject(CartService);
+  readonly cartDraft = inject(CartDraftService);
+  readonly identity = inject(CustomerIdentityService);
   private readonly seo = inject(SeoService);
 
   ngOnInit(): void {

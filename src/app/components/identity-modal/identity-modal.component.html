@@ -12,7 +12,7 @@
       <h2 id="identity-title">Save your cart</h2>
       <p class="intro muted">Enter your details so we can keep your cart and contact you about your order.</p>
 
-      <form (ngSubmit)="continue()" novalidate>
+      <form [formGroup]="form" (ngSubmit)="continue()" novalidate>
         <div class="field">
           <label for="id-name">Full name <span class="req">*</span></label>
           <input id="id-name" class="input" [class.invalid]="invalid('name')" formControlName="name" autocomplete="name" />
@@ -39,7 +39,7 @@
         </label>
         @if (invalid('accept')) { <p class="field-error">Please accept to continue.</p> }
 
-        <button class="btn btn-primary btn-block btn-lg" type="submit">Continue</button>
+        <button class="btn btn-primary btn-block btn-lg" type="submit">Continue as guest</button>
       </form>
 
       <div class="signin">

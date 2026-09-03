@@ -11,11 +11,15 @@ import { HttpProductRepository } from './app/repositories/http-product.repositor
 import { OrderRepository } from './app/repositories/order.repository';
 import { MockOrderRepository } from './app/repositories/mock-order.repository';
 import { HttpOrderRepository } from './app/repositories/http-order.repository';
+import { CartDraftRepository } from './app/repositories/cart-draft.repository';
+import { MockCartDraftRepository } from './app/repositories/mock-cart-draft.repository';
+import { HttpCartDraftRepository } from './app/repositories/http-cart-draft.repository';
 
 // Data layer binding. `useMock` (SEED data, no backend) vs the HTTP repositories
-// that call the Phase 2 API. Components depend only on the abstract repositories.
+// that call the API. Components depend only on the abstract repositories.
 const productRepository = environment.useMock ? MockProductRepository : HttpProductRepository;
 const orderRepository = environment.useMock ? MockOrderRepository : HttpOrderRepository;
+const cartDraftRepository = environment.useMock ? MockCartDraftRepository : HttpCartDraftRepository;
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -29,5 +33,6 @@ bootstrapApplication(AppComponent, {
 
     { provide: ProductRepository, useClass: productRepository },
     { provide: OrderRepository, useClass: orderRepository },
+    { provide: CartDraftRepository, useClass: cartDraftRepository },
   ],
 }).catch(err => console.error(err));

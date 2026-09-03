@@ -2,6 +2,7 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomerIdentityService } from '../../services/customer-identity.service';
+import { CartDraftService } from '../../services/cart-draft.service';
 
 /**
  * "Save your cart" identity modal. Opens after a tentative add-to-cart when the
@@ -20,6 +21,7 @@ import { CustomerIdentityService } from '../../services/customer-identity.servic
 export class IdentityModalComponent {
   private readonly fb = inject(FormBuilder);
   readonly identity = inject(CustomerIdentityService);
+  private readonly cartDraft = inject(CartDraftService);
 
   readonly showSignInNote = signal(false);
 
@@ -52,6 +54,8 @@ export class IdentityModalComponent {
     }
     const v = this.form.getRawValue();
     this.identity.save({ name: v.name!, email: v.email!, mobile: v.mobile! });
+    // Associate the local cart with a server-side cart / order-draft (guest).
+    this.cartDraft.associate();
     this.identity.closePrompt();
   }
 }

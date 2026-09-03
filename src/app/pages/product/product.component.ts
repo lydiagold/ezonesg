@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs/operators';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
+import { CustomerIdentityService } from '../../services/customer-identity.service';
 import { SeoService } from '../../services/seo.service';
 import {
   Product,
@@ -30,6 +31,7 @@ export class ProductComponent {
   private readonly router = inject(Router);
   private readonly products = inject(ProductService);
   private readonly cart = inject(CartService);
+  private readonly identity = inject(CustomerIdentityService);
   private readonly seo = inject(SeoService);
 
   readonly product = toSignal(
@@ -122,6 +124,7 @@ export class ProductComponent {
     this.cart.add(p, v, this.quantity());
     this.justAdded.set(true);
     setTimeout(() => this.justAdded.set(false), 1500);
+    this.identity.promptIfNeeded();
     return true;
   }
 

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SeoService } from '../../services/seo.service';
-import { BUSINESS } from '../../config/business.config';
+import { SETTINGS, whatsappLink } from '../../config/business.config';
 
 @Component({
   selector: 'app-contact',
@@ -10,13 +10,18 @@ import { BUSINESS } from '../../config/business.config';
 })
 export class ContactComponent implements OnInit {
   private readonly seo = inject(SeoService);
-  readonly business = BUSINESS;
+  readonly settings = SETTINGS;
+  readonly whatsapp = whatsappLink();
+
+  get hasAnyChannel(): boolean {
+    return !!(this.settings.supportEmail || this.settings.supportPhone || this.whatsapp || this.settings.address);
+  }
 
   ngOnInit(): void {
     this.seo.update({
       title: 'Contact',
       path: '/contact',
-      description: `Contact ${BUSINESS.name} — WhatsApp, phone and email support for electronics in Singapore.`,
+      description: `Contact ${SETTINGS.businessName} for electronics support in Singapore.`,
     });
   }
 }

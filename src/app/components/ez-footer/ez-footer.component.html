@@ -1,11 +1,11 @@
 <footer class="ftr">
-  <div class="container ftr-grid">
+  <div class="ez-container ftr-grid">
     <div class="ftr-brand">
-      <span class="brand">{{ business.name }}</span>
-      <p class="muted">{{ business.tagline }}</p>
-      <a class="wa" [href]="business.whatsappLink" target="_blank" rel="noopener">
-        WhatsApp us
-      </a>
+      <span class="brand">{{ settings.businessName }}</span>
+      <p class="muted">{{ settings.tagline }}</p>
+      @if (whatsapp) {
+        <a class="wa" [href]="whatsapp" target="_blank" rel="noopener">WhatsApp us</a>
+      }
     </div>
 
     <nav aria-label="Shop">
@@ -26,18 +26,28 @@
       </ul>
     </nav>
 
+    <nav aria-label="Policies">
+      <h4>Policies</h4>
+      <ul>
+        @for (link of policyLinks; track link.path) {
+          <li><a [routerLink]="link.path">{{ link.label }}</a></li>
+        }
+      </ul>
+    </nav>
+
     <div class="ftr-contact">
       <h4>Contact</h4>
       <ul>
-        <li><a [href]="'mailto:' + business.email">{{ business.email }}</a></li>
-        <li><a [href]="'tel:' + business.phone">{{ business.phone }}</a></li>
-        <li class="muted">{{ business.hours }}</li>
+        @if (settings.supportEmail) { <li><a [href]="'mailto:' + settings.supportEmail">{{ settings.supportEmail }}</a></li> }
+        @if (settings.supportPhone) { <li><a [href]="'tel:' + settings.supportPhone">{{ settings.supportPhone }}</a></li> }
+        @if (settings.businessHours) { <li class="muted">{{ settings.businessHours }}</li> }
+        @if (!hasContact) { <li class="muted">Contact details coming soon</li> }
       </ul>
     </div>
   </div>
 
-  <div class="container ftr-bottom">
-    <span class="muted">© {{ year }} {{ business.legalName }}. All rights reserved.</span>
-    <span class="muted">{{ business.domain }}</span>
+  <div class="ez-container ftr-bottom">
+    <span class="muted">© {{ year }} {{ settings.legalName }}. All rights reserved.</span>
+    <span class="muted">{{ settings.domain }}</span>
   </div>
 </footer>

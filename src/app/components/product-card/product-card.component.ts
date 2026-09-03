@@ -9,6 +9,7 @@ import {
   totalStock,
 } from '../../models/product.model';
 import { CartService } from '../../services/cart.service';
+import { CustomerIdentityService } from '../../services/customer-identity.service';
 
 @Component({
   selector: 'app-product-card',
@@ -19,6 +20,7 @@ import { CartService } from '../../services/cart.service';
 })
 export class ProductCardComponent {
   private readonly cart = inject(CartService);
+  private readonly identity = inject(CustomerIdentityService);
   private readonly router = inject(Router);
 
   @Input({ required: true }) product!: Product;
@@ -28,6 +30,24 @@ export class ProductCardComponent {
   get price(): number { return effectivePrice(this.product); }
   get oldPrice(): number | undefined { return compareAtPrice(this.product); }
   get available(): boolean { return inStock(this.product); }
+
+  /** Lowest purchasable price across active variants (for "From $X"). */
+  get fromPrice(): number {
+    const base = effectivePrice(this.product);
+    const prices = this.product.variants
+      .filter(v => v.active)
+      .map(v => v.priceOverride ?? base);
+    return prices.length ? Math.min(...prices) : base;
+  }
+
+  /** True when variants span more than one price → show "From". */
+  get hasPriceRange(): boolean {
+    const base = effectivePrice(this.product);
+    const prices = new Set(
+      this.product.variants.filter(v => v.active).map(v => v.priceOverride ?? base)
+    );
+    return prices.size > 1;
+  }
   get lowStock(): boolean {
     const s = totalStock(this.product);
     return s > 0 && s <= 3;
@@ -47,5 +67,7 @@ export class ProductCardComponent {
     this.cart.add(this.product, variant, 1);
     this.justAdded.set(true);
     setTimeout(() => this.justAdded.set(false), 1500);
+    // Collect contact + terms once the cart has an item, if not already captured.
+    this.identity.promptIfNeeded();
   }
 }

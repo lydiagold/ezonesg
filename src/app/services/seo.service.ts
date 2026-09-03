@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
-import { BUSINESS } from '../config/business.config';
+import { SETTINGS } from '../config/business.config';
 
 export interface SeoData {
   title: string;
@@ -23,7 +23,7 @@ export class SeoService {
   private readonly doc = inject(DOCUMENT);
 
   update(data: SeoData): void {
-    const fullTitle = `${data.title} | ${BUSINESS.name}`;
+    const fullTitle = `${data.title} | ${SETTINGS.businessName}`;
     this.title.setTitle(fullTitle);
 
     if (data.description) {
@@ -36,7 +36,7 @@ export class SeoService {
       this.meta.updateTag({ property: 'og:image', content: data.image });
     }
 
-    const url = `https://${BUSINESS.domain}${data.path ?? ''}`;
+    const url = `https://${SETTINGS.domain}${data.path ?? ''}`;
     this.meta.updateTag({ property: 'og:url', content: url });
     this.setCanonical(url);
   }

@@ -1,40 +1,47 @@
 <!-- Hero -->
 <section class="hero">
-  <div class="container hero-inner">
+  <div class="ez-container hero-inner">
     <div class="hero-copy">
-      <span class="badge badge-accent">New · iPhone 16 series</span>
+      <span class="badge badge-accent">New · iPhone Series</span>
       <h1>Singapore electronics,<br />made simple.</h1>
-      <p>Genuine iPhones, EZONE tablets and everyday accessories — clean prices, fast local delivery.</p>
+      <p>Genuine phones, EZONE tablets and everyday tech.</p>
       <div class="hero-cta">
         <a class="btn btn-primary btn-lg" routerLink="/shop/phones">Shop iPhones</a>
         <a class="btn btn-outline btn-lg" routerLink="/shop/tablets">Shop Tablets</a>
       </div>
     </div>
-    <div class="hero-tiles">
-      <a class="tile" routerLink="/shop/phones">
-        <img src="assets/images/seed/phone.svg" alt="" aria-hidden="true" />
-        <span>iPhones</span>
-      </a>
-      <a class="tile" routerLink="/shop/tablets">
-        <img src="assets/images/seed/tablet.svg" alt="" aria-hidden="true" />
-        <span>Tablets</span>
-      </a>
-      <a class="tile" routerLink="/shop/accessories">
-        <img src="assets/images/seed/accessory.svg" alt="" aria-hidden="true" />
-        <span>Accessories</span>
-      </a>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hv-card hv-lg"><img src="assets/images/seed/phone.svg" alt="" /></div>
+      <div class="hv-card"><img src="assets/images/seed/tablet.svg" alt="" /></div>
+      <div class="hv-card"><img src="assets/images/seed/accessory.svg" alt="" /></div>
+    </div>
+  </div>
+</section>
+
+<!-- Category cards -->
+<section class="section">
+  <div class="ez-container">
+    <div class="section-head"><h2>Shop by category</h2></div>
+    <div class="cat-cards">
+      @for (c of categories; track c.slug) {
+        <a class="cat-card" [routerLink]="c.route">
+          <div class="cat-img"><img [src]="categoryImages[c.slug]" [alt]="c.name" /></div>
+          <div class="cat-meta">
+            <h3>{{ c.name }}</h3>
+            <p class="muted">{{ c.tagline }}</p>
+            <span class="cat-link">Shop {{ c.name }} →</span>
+          </div>
+        </a>
+      }
     </div>
   </div>
 </section>
 
 <!-- Featured products -->
-<section class="section">
-  <div class="container">
+<section class="section featured">
+  <div class="ez-container">
     <div class="section-head row">
-      <div>
-        <h2>Featured</h2>
-        <p>Popular picks right now.</p>
-      </div>
+      <div><h2>Featured</h2><p>Popular picks right now.</p></div>
       <a class="btn btn-ghost" routerLink="/shop">View all →</a>
     </div>
     <div class="product-grid">
@@ -45,20 +52,22 @@
   </div>
 </section>
 
-<!-- Promotional banner -->
-<section class="container">
-  <div class="promo">
-    <div>
-      <h2>Free delivery over $500</h2>
-      <p>Islandwide, on us. Plus secure PayNow &amp; card checkout at every order.</p>
+<!-- Promotional banner (only if delivery promo is configured) -->
+@if (freeDeliveryText()) {
+  <section class="ez-container">
+    <div class="promo">
+      <div>
+        <h2>{{ freeDeliveryText() }}</h2>
+        <p>Islandwide, on us. Secure checkout on every order.</p>
+      </div>
+      <a class="btn btn-primary btn-lg" routerLink="/shop">Start shopping</a>
     </div>
-    <a class="btn btn-primary btn-lg" routerLink="/shop">Start shopping</a>
-  </div>
-</section>
+  </section>
+}
 
 <!-- Why shop with EZONE -->
 <section class="section">
-  <div class="container">
+  <div class="ez-container">
     <div class="section-head"><h2>Why shop with EZONE</h2></div>
     <div class="reasons">
       @for (r of reasons; track r.title) {
@@ -71,15 +80,17 @@
   </div>
 </section>
 
-<!-- Contact / WhatsApp CTA -->
-<section class="container">
+<!-- Contact CTA -->
+<section class="ez-container">
   <div class="cta">
     <div>
       <h2>Questions before you buy?</h2>
-      <p>Chat with us on WhatsApp — we reply fast during store hours.</p>
+      <p>Reach out and we'll help you pick the right device.</p>
     </div>
     <div class="cta-actions">
-      <a class="btn btn-primary btn-lg" [href]="business.whatsappLink" target="_blank" rel="noopener">WhatsApp us</a>
+      @if (whatsapp) {
+        <a class="btn btn-primary btn-lg" [href]="whatsapp" target="_blank" rel="noopener">WhatsApp us</a>
+      }
       <a class="btn btn-outline btn-lg" routerLink="/contact">Contact</a>
     </div>
   </div>

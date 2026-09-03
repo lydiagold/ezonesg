@@ -1,34 +1,51 @@
 <section class="section">
-  <div class="container narrow">
+  <div class="ez-container narrow">
     <div class="section-head">
       <h1>Contact us</h1>
       <p class="muted">We're here to help — reach us the way that suits you.</p>
     </div>
 
-    <div class="contact-grid">
-      <a class="card contact-card" [href]="business.whatsappLink" target="_blank" rel="noopener">
-        <h3>WhatsApp</h3>
-        <p class="muted">Fastest response during store hours.</p>
-        <span class="link">{{ business.whatsapp }}</span>
-      </a>
-      <a class="card contact-card" [href]="'tel:' + business.phone">
-        <h3>Phone</h3>
-        <p class="muted">Call us for order and product enquiries.</p>
-        <span class="link">{{ business.phone }}</span>
-      </a>
-      <a class="card contact-card" [href]="'mailto:' + business.email">
-        <h3>Email</h3>
-        <p class="muted">For quotes, bulk orders and support.</p>
-        <span class="link">{{ business.email }}</span>
-      </a>
-    </div>
+    @if (hasAnyChannel) {
+      <div class="contact-grid">
+        @if (whatsapp) {
+          <a class="card contact-card" [href]="whatsapp" target="_blank" rel="noopener">
+            <h3>WhatsApp</h3>
+            <p class="muted">Fastest response during store hours.</p>
+            <span class="link">{{ settings.whatsappNumber }}</span>
+          </a>
+        }
+        @if (settings.supportPhone) {
+          <a class="card contact-card" [href]="'tel:' + settings.supportPhone">
+            <h3>Phone</h3>
+            <p class="muted">Call us for order and product enquiries.</p>
+            <span class="link">{{ settings.supportPhone }}</span>
+          </a>
+        }
+        @if (settings.supportEmail) {
+          <a class="card contact-card" [href]="'mailto:' + settings.supportEmail">
+            <h3>Email</h3>
+            <p class="muted">For quotes, bulk orders and support.</p>
+            <span class="link">{{ settings.supportEmail }}</span>
+          </a>
+        }
+      </div>
 
-    <div class="card store-info">
-      <h2>Store information</h2>
-      <dl>
-        <div><dt>Address</dt><dd>{{ business.address.line1 }}, {{ business.address.line2 }}<br />{{ business.address.city }} {{ business.address.postalCode }}</dd></div>
-        <div><dt>Hours</dt><dd>{{ business.hours }}</dd></div>
-      </dl>
-    </div>
+      @if (settings.address || settings.businessHours) {
+        <div class="card store-info">
+          <h2>Store information</h2>
+          <dl>
+            @if (settings.address) {
+              <div><dt>Address</dt><dd>{{ settings.address.line1 }}@if (settings.address.line2) {, {{ settings.address.line2 }}}<br />{{ settings.address.city }} {{ settings.address.postalCode }}</dd></div>
+            }
+            @if (settings.businessHours) { <div><dt>Hours</dt><dd>{{ settings.businessHours }}</dd></div> }
+          </dl>
+        </div>
+      }
+    } @else {
+      <div class="card coming-soon">
+        <h3>Contact details coming soon</h3>
+        <p class="muted">Our phone, WhatsApp and email details will appear here once configured. In the meantime, you can browse and place orders online.</p>
+      </div>
+    }
   </div>
 </section>

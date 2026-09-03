@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { SeoService } from '../../services/seo.service';
 import { CartItem, lineTotal } from '../../models/cart-item.model';
-import { FREE_DELIVERY_THRESHOLD } from '../../config/business.config';
 
 @Component({
   selector: 'app-cart',
@@ -16,8 +15,6 @@ import { FREE_DELIVERY_THRESHOLD } from '../../config/business.config';
 export class CartComponent implements OnInit {
   readonly cart = inject(CartService);
   private readonly seo = inject(SeoService);
-
-  readonly freeDeliveryThreshold = FREE_DELIVERY_THRESHOLD;
 
   ngOnInit(): void {
     this.seo.update({ title: 'Your Cart', path: '/cart', description: 'Review your EZONE cart.' });

@@ -50,8 +50,13 @@
   color: var(--text);
   transition: border-color var(--transition), background var(--transition);
 }
-.chip:hover { border-color: var(--text-mid); }
-.chip.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-dark); }
+.chip:hover { border-color: var(--ez-text-muted); }
+.chip.active {
+  border-color: var(--ez-primary);
+  background: var(--ez-primary-soft);
+  color: var(--ez-primary-strong);
+  box-shadow: 0 0 0 1px var(--ez-primary) inset;
+}
 
 .qty-row { display: flex; flex-direction: column; }
 .qty { display: inline-flex; align-items: center; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); width: max-content; }

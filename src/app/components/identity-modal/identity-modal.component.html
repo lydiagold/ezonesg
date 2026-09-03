@@ -1,0 +1,54 @@
+@if (identity.promptOpen()) {
+  <div class="backdrop" (click)="close()">
+    <div
+      class="sheet"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="identity-title"
+      (click)="$event.stopPropagation()"
+    >
+      <button class="close" type="button" aria-label="Close" (click)="close()">×</button>
+
+      <h2 id="identity-title">Save your cart</h2>
+      <p class="intro muted">Enter your details so we can keep your cart and contact you about your order.</p>
+
+      <form (ngSubmit)="continue()" novalidate>
+        <div class="field">
+          <label for="id-name">Full name <span class="req">*</span></label>
+          <input id="id-name" class="input" [class.invalid]="invalid('name')" formControlName="name" autocomplete="name" />
+          @if (invalid('name')) { <p class="field-error">Please enter your name.</p> }
+        </div>
+
+        <div class="field">
+          <label for="id-email">Email address <span class="req">*</span></label>
+          <input id="id-email" type="email" class="input" [class.invalid]="invalid('email')" formControlName="email" autocomplete="email" />
+          @if (invalid('email')) { <p class="field-error">Enter a valid email.</p> }
+        </div>
+
+        <div class="field">
+          <label for="id-mobile">Mobile number <span class="req">*</span></label>
+          <input id="id-mobile" class="input" [class.invalid]="invalid('mobile')" formControlName="mobile" placeholder="e.g. 9123 4567" inputmode="tel" autocomplete="tel" />
+          @if (invalid('mobile')) { <p class="field-error">Enter a valid Singapore mobile number.</p> }
+        </div>
+
+        <label class="consent">
+          <input type="checkbox" formControlName="accept" />
+          <span>I agree to EZONE's
+            <a routerLink="/terms" target="_blank">Terms &amp; Conditions</a> and
+            <a routerLink="/privacy" target="_blank">Privacy Policy</a>.</span>
+        </label>
+        @if (invalid('accept')) { <p class="field-error">Please accept to continue.</p> }
+
+        <button class="btn btn-primary btn-block btn-lg" type="submit">Continue</button>
+      </form>
+
+      <div class="signin">
+        <span class="muted">Already have an account?</span>
+        <button type="button" class="link" (click)="showSignInNote.set(true)">Sign in</button>
+      </div>
+      @if (showSignInNote()) {
+        <p class="note muted">Account sign-in is coming soon — continue as a guest for now.</p>
+      }
+    </div>
+  </div>
+}

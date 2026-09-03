@@ -43,13 +43,14 @@
           }
           <div class="sum-row">
             <span>Delivery</span>
-            <span>{{ cart.deliveryFee() === 0 ? 'Free' : (cart.deliveryFee() | currency:'SGD':'symbol-narrow') }}</span>
+            <span class="muted">Calculated at checkout</span>
           </div>
-          @if (cart.deliveryFee() > 0) {
-            <p class="ship-hint muted">Free delivery over {{ freeDeliveryThreshold | currency:'SGD':'symbol-narrow' }}.</p>
+          @if (cart.taxEnabled) {
+            <div class="sum-row"><span>{{ cart.taxLabel }}</span><span>{{ cart.tax() | currency:'SGD':'symbol-narrow' }}</span></div>
           }
-          <div class="sum-row total"><span>Total</span><span>{{ cart.total() | currency:'SGD':'symbol-narrow' }}</span></div>
-          <a class="btn btn-primary btn-lg btn-block" routerLink="/checkout">Checkout</a>
+          <div class="sum-row total"><span>Total</span><span>{{ cart.totalPreDelivery() | currency:'SGD':'symbol-narrow' }}</span></div>
+          <p class="ship-hint muted">Choose pickup or delivery at checkout.</p>
+          <a class="btn btn-primary btn-lg btn-block" routerLink="/checkout">Continue</a>
           <a class="btn btn-ghost btn-block" routerLink="/shop">Continue shopping</a>
         </aside>
       </div>

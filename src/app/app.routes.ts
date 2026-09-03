@@ -65,6 +65,26 @@ export const routes: Routes = [
         path: 'about',
         loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent),
       },
+      {
+        path: 'terms',
+        data: { policy: 'terms', path: 'terms' },
+        loadComponent: () => import('./pages/policy/policy.component').then(m => m.PolicyComponent),
+      },
+      {
+        path: 'privacy',
+        data: { policy: 'privacy', path: 'privacy' },
+        loadComponent: () => import('./pages/policy/policy.component').then(m => m.PolicyComponent),
+      },
+      {
+        path: 'refund-policy',
+        data: { policy: 'refund', path: 'refund-policy' },
+        loadComponent: () => import('./pages/policy/policy.component').then(m => m.PolicyComponent),
+      },
+      {
+        path: 'delivery-policy',
+        data: { policy: 'delivery', path: 'delivery-policy' },
+        loadComponent: () => import('./pages/policy/policy.component').then(m => m.PolicyComponent),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

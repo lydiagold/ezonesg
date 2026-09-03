@@ -1,7 +1,7 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
 import { CartItem, cartItemKey, lineTotal } from '../models/cart-item.model';
 import { Product, ProductVariant, effectivePrice } from '../models/product.model';
-import { deliveryFeeFor } from '../config/business.config';
+import { deliveryFeeFor, taxFor, SETTINGS } from '../config/business.config';
 
 const CART_KEY = 'ezone_cart';
 
@@ -25,10 +25,21 @@ export class CartService {
 
   readonly discount = computed(() => 0);
 
-  readonly deliveryFee = computed(() => deliveryFeeFor(this.subtotal()));
+  /** Configurable tax (0 unless enabled and price-exclusive in settings). */
+  readonly tax = computed(() => taxFor(this.subtotal() - this.discount()));
+  readonly taxEnabled = SETTINGS.tax.enabled && !SETTINGS.tax.inclusive;
+  readonly taxLabel = SETTINGS.tax.label;
 
+  /** Cart total before delivery — delivery is chosen at the fulfilment step. */
+  readonly totalPreDelivery = computed(
+    () => this.subtotal() - this.discount() + this.tax()
+  );
+
+  // Retained for the existing single-page checkout (superseded by the 3-step
+  // fulfilment flow in a later increment).
+  readonly deliveryFee = computed(() => deliveryFeeFor(this.subtotal()));
   readonly total = computed(
-    () => this.subtotal() - this.discount() + this.deliveryFee()
+    () => this.subtotal() - this.discount() + this.deliveryFee() + this.tax()
   );
 
   readonly isEmpty = computed(() => this._items().length === 0);

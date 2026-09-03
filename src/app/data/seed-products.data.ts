@@ -22,6 +22,7 @@ function buildVariants(
   baseSku: string,
   dims: { name: string; values: string[] }[],
   opts: {
+    basePrice: number;
     baseStock: number;
     /** Extra price (SGD) added per selected attribute value. */
     upcharge?: Record<string, number>;
@@ -36,10 +37,13 @@ function buildVariants(
   );
 
   return combos.map((attributes, i) => {
-    const priceOverride = Object.values(attributes).reduce(
+    const upcharge = Object.values(attributes).reduce(
       (sum, val) => sum + (opts.upcharge?.[val] ?? 0),
       0
     );
+    // Absolute variant price = base + upcharge; only set when it differs so
+    // base-config variants fall back to the product's list price.
+    const priceOverride = upcharge > 0 ? opts.basePrice + upcharge : undefined;
     const oos = Object.values(attributes).some(v => opts.outOfStock?.includes(v));
     const skuSuffix = Object.values(attributes)
       .map(v => v.replace(/[^A-Za-z0-9]/g, '').slice(0, 4).toUpperCase())
@@ -48,7 +52,7 @@ function buildVariants(
       id: `${baseSku}-${i + 1}`,
       sku: `${baseSku}-${skuSuffix || 'STD'}`,
       attributes,
-      priceOverride: priceOverride > 0 ? priceOverride : undefined,
+      priceOverride,
       stockQuantity: oos ? 0 : opts.baseStock,
       active: true,
     };
@@ -100,7 +104,7 @@ function iphone(p: PhoneSeed): Product {
     variants: buildVariants(sku, [
       { name: 'Storage', values: p.storages },
       { name: 'Colour', values: p.colours },
-    ], { baseStock: 12, upcharge: STORAGE_UPCHARGE, outOfStock: ['1TB'] }),
+    ], { basePrice: p.base, baseStock: 12, upcharge: STORAGE_UPCHARGE, outOfStock: ['1TB'] }),
     featured: !!p.featured,
     active: true,
     createdAt: NOW,
@@ -158,6 +162,7 @@ function ezoneTablet(t: TabletSeed): Product {
       { name: 'Connectivity', values: t.connectivity },
       { name: 'Colour', values: t.colours },
     ], {
+      basePrice: t.base,
       baseStock: 20,
       upcharge: { '8GB': 60, '128GB': 40, '256GB': 120, LTE: 80 },
     }),

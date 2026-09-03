@@ -1,0 +1,20 @@
+:host { display: block; }
+.narrow { max-width: 760px; }
+
+.policy-head h1 { margin-bottom: 0.25rem; }
+.policy-head { margin-bottom: 1.25rem; }
+
+.draft-note {
+  background: var(--ez-warn-soft);
+  color: var(--ez-warn);
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--ez-radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.intro { font-size: 1.05rem; color: var(--ez-text-muted); margin-bottom: 1.5rem; }
+
+.policy-section { margin-bottom: 1.5rem; }
+.policy-section h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+.policy-section p { color: var(--ez-text-muted); margin-bottom: 0.6rem; }

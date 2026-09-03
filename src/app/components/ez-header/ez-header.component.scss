@@ -76,6 +76,17 @@
   justify-content: center;
 }
 
+.account-btn .dot {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--ez-radius-full);
+  background: var(--ez-primary);
+  border: 1.5px solid var(--ez-surface);
+}
+
 .menu-toggle { display: none; }
 
 .bars { display: inline-flex; flex-direction: column; gap: 4px; }

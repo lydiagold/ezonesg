@@ -1,35 +1,98 @@
 /**
- * Central EZONE business configuration. Keep contact details, delivery rules and
- * store info here rather than hard-coding them across components. In Phase 3 the
- * mutable subset is served from the `ezone-settings` DynamoDB table.
+ * Public store settings consumed by the storefront.
+ *
+ * IMPORTANT: this is a FRONTEND placeholder that mirrors the shape of the public
+ * settings API (owned by the admin/backend work). It exists so the UI has a
+ * single, configurable source instead of hard-coded values scattered across
+ * components. Once the public settings endpoint exists, a settings service will
+ * hydrate this shape from the backend and admin edits will flow through.
+ *
+ * Contact fields are intentionally `null` until REAL values are configured — the
+ * storefront must never publish fabricated phone/WhatsApp/email details. The UI
+ * conditionally renders each channel only when a value is present.
+ *
+ * Delivery/GST values are configuration, not business logic — nothing is
+ * hard-coded into pricing paths; helpers read from here.
  */
-export const BUSINESS = {
-  name: 'EZONE',
+export interface StoreSettings {
+  businessName: string;
+  legalName: string;
+  tagline: string;
+  domain: string;
+
+  supportEmail: string | null;
+  supportPhone: string | null;
+  whatsappNumber: string | null;
+  businessHours: string | null;
+
+  address: {
+    line1: string;
+    line2?: string;
+    city: string;
+    postalCode: string;
+  } | null;
+
+  pickupInstructions: string | null;
+
+  deliveryEnabled: boolean;
+  storePickupEnabled: boolean;
+  standardDeliveryFee: number;
+  /** null = no free-delivery promotion configured. */
+  freeDeliveryThreshold: number | null;
+
+  tax: {
+    enabled: boolean;
+    label: string;
+    ratePercent: number;
+    /** true = displayed prices already include tax. */
+    inclusive: boolean;
+  };
+}
+
+export const SETTINGS: StoreSettings = {
+  businessName: 'EZONE',
   legalName: 'Ezone SG',
   tagline: 'Singapore electronics, made simple.',
   domain: 'ezone.sg',
-  currency: 'SGD',
 
-  email: 'sales@ezone.sg',
-  phone: '+65 6000 0000',
-  whatsapp: '+6580000000',
-  whatsappLink: 'https://wa.me/6580000000',
+  // Not configured yet — do not publish fabricated contact details.
+  supportEmail: null,
+  supportPhone: null,
+  whatsappNumber: null,
+  businessHours: null,
+  address: null,
+  pickupInstructions: null,
 
-  address: {
-    line1: '1 Marina Boulevard',
-    line2: '#00-00',
-    city: 'Singapore',
-    postalCode: '018989',
+  deliveryEnabled: true,
+  storePickupEnabled: true,
+  standardDeliveryFee: 8,
+  freeDeliveryThreshold: 500,
+
+  tax: {
+    enabled: false, // SG GST configurable by admin; off until confirmed.
+    label: 'GST',
+    ratePercent: 9,
+    inclusive: true,
   },
+};
 
-  hours: 'Mon–Sat, 10am – 8pm (SGT)',
-} as const;
+/** `wa.me` link, or null when no WhatsApp number is configured. */
+export function whatsappLink(settings: StoreSettings = SETTINGS): string | null {
+  if (!settings.whatsappNumber) return null;
+  const digits = settings.whatsappNumber.replace(/[^\d]/g, '');
+  return `https://wa.me/${digits}`;
+}
 
-/** Flat-rate delivery fee (SGD), waived above the free-delivery threshold. */
-export const DELIVERY_FEE = 8;
-export const FREE_DELIVERY_THRESHOLD = 500;
+/** Delivery fee for a delivery order at a given subtotal (0 = free/threshold met). */
+export function deliveryFeeFor(subtotal: number, settings: StoreSettings = SETTINGS): number {
+  if (!settings.deliveryEnabled || subtotal <= 0) return 0;
+  const threshold = settings.freeDeliveryThreshold;
+  if (threshold != null && subtotal >= threshold) return 0;
+  return settings.standardDeliveryFee;
+}
 
-export function deliveryFeeFor(subtotal: number): number {
-  if (subtotal <= 0) return 0;
-  return subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+/** Tax amount for a taxable base (0 when tax disabled or prices are inclusive). */
+export function taxFor(base: number, settings: StoreSettings = SETTINGS): number {
+  if (!settings.tax.enabled || settings.tax.inclusive) return 0;
+  return Math.round(base * settings.tax.ratePercent) / 100;
 }

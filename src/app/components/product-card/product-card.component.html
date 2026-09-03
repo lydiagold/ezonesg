@@ -10,37 +10,34 @@
     <h3 class="pcard-name">
       <a [routerLink]="['/product', product.slug]">{{ product.name }}</a>
     </h3>
-    <p class="pcard-sub">{{ product.shortDescription }}</p>
 
     <div class="pcard-price">
-      <span class="price">{{ price | currency:'SGD':'symbol-narrow' }}</span>
-      @if (oldPrice) {
+      @if (hasPriceRange) { <span class="from">From</span> }
+      <span class="price">{{ fromPrice | currency:'SGD':'symbol-narrow' }}</span>
+      @if (oldPrice && !hasPriceRange) {
         <span class="price-old">{{ oldPrice | currency:'SGD':'symbol-narrow' }}</span>
       }
     </div>
 
     <div class="pcard-stock">
       @if (!available) {
-        <span class="badge badge-muted">Out of stock</span>
+        <span class="stock out">Out of stock</span>
       } @else if (lowStock) {
-        <span class="badge badge-warn">Low stock</span>
+        <span class="stock low">Low stock</span>
       } @else {
-        <span class="badge badge-success">In stock</span>
+        <span class="stock in">In stock</span>
       }
     </div>
 
-    <div class="pcard-actions">
-      <button
-        class="btn btn-primary btn-block"
-        type="button"
-        [disabled]="!available"
-        (click)="addOrChoose()"
-      >
-        @if (justAdded()) { Added ✓ }
-        @else if (hasChoices) { Choose options }
-        @else { Add to Cart }
-      </button>
-      <a class="btn btn-outline btn-block" [routerLink]="['/product', product.slug]">View Product</a>
-    </div>
+    <button
+      class="btn btn-primary btn-block pcard-cta"
+      type="button"
+      [disabled]="!available"
+      (click)="addOrChoose()"
+    >
+      @if (justAdded()) { Added ✓ }
+      @else if (hasChoices) { Choose options }
+      @else { Add to Cart }
+    </button>
   </div>
 </article>

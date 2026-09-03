@@ -2,8 +2,9 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
+import { CustomerIdentityService } from '../../services/customer-identity.service';
 import { NAV_LINKS } from '../../config/nav.config';
-import { BUSINESS } from '../../config/business.config';
+import { SETTINGS } from '../../config/business.config';
 
 @Component({
   selector: 'app-ez-header',
@@ -15,8 +16,9 @@ import { BUSINESS } from '../../config/business.config';
 export class EzHeaderComponent {
   private readonly router = inject(Router);
   readonly cart = inject(CartService);
+  readonly identity = inject(CustomerIdentityService);
 
-  readonly brand = BUSINESS.name;
+  readonly brand = SETTINGS.businessName;
   readonly links = NAV_LINKS;
 
   readonly menuOpen = signal(false);
@@ -46,5 +48,14 @@ export class EzHeaderComponent {
     this.searchOpen.set(false);
     this.menuOpen.set(false);
     this.router.navigate(['/shop'], { queryParams: q ? { q } : {} });
+  }
+
+  /**
+   * Account affordance. Full accounts arrive in Increment B (Cognito); for now
+   * this opens the identity capture so guests can save/update their details.
+   */
+  openAccount(): void {
+    this.menuOpen.set(false);
+    this.identity.openPrompt();
   }
 }

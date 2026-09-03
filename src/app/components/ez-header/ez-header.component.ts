@@ -1,27 +1,50 @@
-import { Component, signal, HostListener } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, HostListener, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { CartService } from '../../services/cart.service';
+import { NAV_LINKS } from '../../config/nav.config';
+import { BUSINESS } from '../../config/business.config';
 
 @Component({
   selector: 'app-ez-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, FormsModule],
   templateUrl: './ez-header.component.html',
-  styleUrl: './ez-header.component.scss'
+  styleUrl: './ez-header.component.scss',
 })
 export class EzHeaderComponent {
-  isMenuOpen = signal(false);
-  isScrolled = signal(false);
+  private readonly router = inject(Router);
+  readonly cart = inject(CartService);
 
-  @HostListener('window:scroll')
-  onScroll(): void {
-    this.isScrolled.set(window.scrollY > 60);
+  readonly brand = BUSINESS.name;
+  readonly links = NAV_LINKS;
+
+  readonly menuOpen = signal(false);
+  readonly searchOpen = signal(false);
+  query = '';
+
+  @HostListener('window:keydown.escape')
+  onEscape(): void {
+    this.menuOpen.set(false);
+    this.searchOpen.set(false);
   }
 
   toggleMenu(): void {
-    this.isMenuOpen.update(v => !v);
+    this.menuOpen.update(v => !v);
   }
 
   closeMenu(): void {
-    this.isMenuOpen.set(false);
+    this.menuOpen.set(false);
+  }
+
+  toggleSearch(): void {
+    this.searchOpen.update(v => !v);
+  }
+
+  submitSearch(): void {
+    const q = this.query.trim();
+    this.searchOpen.set(false);
+    this.menuOpen.set(false);
+    this.router.navigate(['/shop'], { queryParams: q ? { q } : {} });
   }
 }

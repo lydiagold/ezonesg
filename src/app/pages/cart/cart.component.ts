@@ -1,46 +1,32 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
+import { SeoService } from '../../services/seo.service';
+import { CartItem, lineTotal } from '../../models/cart-item.model';
+import { FREE_DELIVERY_THRESHOLD } from '../../config/business.config';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, CurrencyPipe],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.scss'
+  styleUrl: './cart.component.scss',
 })
-export class CartComponent {
-  cartService = inject(CartService);
+export class CartComponent implements OnInit {
+  readonly cart = inject(CartService);
+  private readonly seo = inject(SeoService);
 
-  items = this.cartService.items;
-  total = this.cartService.total;
-  isEmpty = this.cartService.isEmpty;
-  count = this.cartService.count;
+  readonly freeDeliveryThreshold = FREE_DELIVERY_THRESHOLD;
 
-  increment(productId: number, currentQty: number): void {
-    this.cartService.updateQuantity(productId, currentQty + 1);
+  ngOnInit(): void {
+    this.seo.update({ title: 'Your Cart', path: '/cart', description: 'Review your EZONE cart.' });
   }
 
-  decrement(productId: number, currentQty: number): void {
-    this.cartService.updateQuantity(productId, currentQty - 1);
-  }
+  key(item: CartItem): string { return this.cart.keyOf(item); }
+  line(item: CartItem): number { return lineTotal(item); }
 
-  remove(productId: number): void {
-    this.cartService.removeFromCart(productId);
-  }
-
-  checkout(): void {
-    this.cartService.checkout();
-  }
-
-  clearAll(): void {
-    if (confirm('Remove all items from cart?')) {
-      this.cartService.clearCart();
-    }
-  }
-
-  onImageError(event: Event, productName: string): void {
-    const img = event.target as HTMLImageElement;
-    img.src = `https://placehold.co/80x80/4A7C2F/FFF8F0?text=${encodeURIComponent(productName.slice(0, 8))}`;
-  }
+  inc(item: CartItem): void { this.cart.setQuantity(this.key(item), item.quantity + 1); }
+  dec(item: CartItem): void { this.cart.setQuantity(this.key(item), item.quantity - 1); }
+  remove(item: CartItem): void { this.cart.remove(this.key(item)); }
 }

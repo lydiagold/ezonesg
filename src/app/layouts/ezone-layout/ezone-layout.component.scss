@@ -1,4 +1,9 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .ez-main {
-  min-height: calc(100vh - 72px);
-  background: var(--ez-white);
+  flex: 1;
 }

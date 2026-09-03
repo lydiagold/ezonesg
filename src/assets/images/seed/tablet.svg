@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Tablet product placeholder">
+  <rect width="400" height="400" fill="#F4F6FA"/>
+  <rect x="110" y="80" width="180" height="240" rx="16" fill="#FFFFFF" stroke="#C7D0E0" stroke-width="2"/>
+  <rect x="124" y="98" width="152" height="188" rx="6" fill="#EAEFF7"/>
+  <circle cx="200" cy="304" r="7" fill="#D5DCE8"/>
+  <text x="200" y="362" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" fill="#9AA6B8">SEED IMAGE</text>
+</svg>

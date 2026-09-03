@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /cart
+Disallow: /admin
+
+Sitemap: https://ezone.sg/sitemap.xml

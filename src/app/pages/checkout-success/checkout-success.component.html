@@ -1,0 +1,46 @@
+<section class="section">
+  <div class="container narrow">
+    @if (loading()) {
+      <div class="status-card card">
+        <h1>Confirming your payment…</h1>
+        <p class="muted">Please wait a moment.</p>
+      </div>
+    } @else if (order()) {
+      @if (order(); as o) {
+      <div class="status-card card">
+        @if (o.status === 'PAID') {
+          <div class="tick" aria-hidden="true">✓</div>
+          <h1>Payment successful</h1>
+          <p class="lead">Thank you for your order. Your order is confirmed.</p>
+        } @else {
+          <h1>Thank you for your order</h1>
+          <p class="lead">We're confirming your payment. This can take a moment.</p>
+        }
+
+        <div class="ref-box">
+          <span class="muted">Order reference</span>
+          <strong>{{ o.orderReference }}</strong>
+        </div>
+
+        <div class="mini-summary">
+          <div class="sum-row"><span>Items</span><span>{{ o.items.length }}</span></div>
+          <div class="sum-row"><span>Total paid</span><span>{{ o.total | currency:'SGD':'symbol-narrow' }}</span></div>
+          <div class="sum-row"><span>Status</span><span>{{ o.status }}</span></div>
+        </div>
+
+        <p class="muted email-note">A confirmation has been sent to {{ o.customerEmail }}.</p>
+        <div class="actions">
+          <a class="btn btn-outline" [routerLink]="['/order', o.orderReference]">View order</a>
+          <a class="btn btn-primary" routerLink="/shop">Continue shopping</a>
+        </div>
+      </div>
+      }
+    } @else {
+      <div class="status-card card">
+        <h1>Order received</h1>
+        <p class="muted">We couldn't find the order details in this browser@if (ref()) { for {{ ref() }}}. If you completed payment, you'll receive an email confirmation shortly.</p>
+        <a class="btn btn-primary" routerLink="/shop">Continue shopping</a>
+      </div>
+    }
+  </div>
+</section>

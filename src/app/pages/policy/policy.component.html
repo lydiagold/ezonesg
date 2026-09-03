@@ -1,0 +1,21 @@
+@if (doc(); as d) {
+  <section class="section">
+    <div class="ez-container narrow">
+      <div class="policy-head">
+        <h1>{{ d.title }}</h1>
+        <p class="muted">Version {{ d.version }}</p>
+      </div>
+
+      <p class="draft-note">This is placeholder content pending review by the business owner. It is not yet final legal text.</p>
+
+      <p class="intro">{{ d.intro }}</p>
+
+      @for (s of d.sections; track s.heading) {
+        <section class="policy-section">
+          <h2>{{ s.heading }}</h2>
+          @for (p of s.body; track p) { <p>{{ p }}</p> }
+        </section>
+      }
+    </div>
+  </section>
+}

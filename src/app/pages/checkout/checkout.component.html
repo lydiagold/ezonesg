@@ -1,0 +1,88 @@
+<section class="section">
+  <div class="container">
+    <div class="section-head"><h1>Checkout</h1></div>
+
+    @if (cart.isEmpty()) {
+      <div class="empty">
+        <h3>Your cart is empty</h3>
+        <a class="btn btn-primary" routerLink="/shop">Start shopping</a>
+      </div>
+    } @else {
+      <div class="checkout-layout">
+        <form class="co-form card" [formGroup]="form" (ngSubmit)="pay()" novalidate>
+          <h2>Delivery details</h2>
+
+          <div class="field">
+            <label for="name">Full Name <span class="req">*</span></label>
+            <input id="name" class="input" formControlName="customerName" [class.invalid]="invalid('customerName')" autocomplete="name" />
+            @if (invalid('customerName')) { <p class="field-error">Please enter your name.</p> }
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="email">Email <span class="req">*</span></label>
+              <input id="email" type="email" class="input" formControlName="customerEmail" [class.invalid]="invalid('customerEmail')" autocomplete="email" />
+              @if (invalid('customerEmail')) { <p class="field-error">Enter a valid email.</p> }
+            </div>
+            <div class="field">
+              <label for="mobile">Mobile Number <span class="req">*</span></label>
+              <input id="mobile" class="input" formControlName="customerMobile" [class.invalid]="invalid('customerMobile')" placeholder="e.g. 9123 4567" autocomplete="tel" inputmode="tel" />
+              @if (invalid('customerMobile')) { <p class="field-error">Enter a valid Singapore mobile number.</p> }
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="line1">Address Line 1 <span class="req">*</span></label>
+            <input id="line1" class="input" formControlName="line1" [class.invalid]="invalid('line1')" autocomplete="address-line1" />
+            @if (invalid('line1')) { <p class="field-error">Please enter your address.</p> }
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="line2">Address Line 2</label>
+              <input id="line2" class="input" formControlName="line2" autocomplete="address-line2" placeholder="Unit number, building" />
+            </div>
+            <div class="field">
+              <label for="postal">Postal Code <span class="req">*</span></label>
+              <input id="postal" class="input" formControlName="postalCode" [class.invalid]="invalid('postalCode')" placeholder="6 digits" autocomplete="postal-code" inputmode="numeric" />
+              @if (invalid('postalCode')) { <p class="field-error">Enter a 6-digit postal code.</p> }
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="notes">Delivery Notes</label>
+            <textarea id="notes" class="textarea" rows="3" formControlName="deliveryNotes" placeholder="Anything we should know?"></textarea>
+          </div>
+
+          @if (error()) { <p class="field-error banner">{{ error() }}</p> }
+
+          <button class="btn btn-primary btn-lg btn-block" type="submit" [disabled]="submitting()">
+            {{ submitting() ? 'Starting secure payment…' : 'Pay Securely' }}
+          </button>
+          <p class="secure-note muted">You'll be redirected to our secure payment provider to complete payment. EZONE never stores your card details.</p>
+        </form>
+
+        <aside class="summary card">
+          <h2>Order summary</h2>
+          <ul class="co-items">
+            @for (item of cart.items(); track item.sku) {
+              <li>
+                <img [src]="item.image" [alt]="item.name" />
+                <div>
+                  <span class="co-name">{{ item.name }}</span>
+                  @if (item.variantDescription) { <span class="muted co-variant">{{ item.variantDescription }}</span> }
+                  <span class="muted">Qty {{ item.quantity }}</span>
+                </div>
+                <span class="co-line">{{ (item.unitPrice * item.quantity) | currency:'SGD':'symbol-narrow' }}</span>
+              </li>
+            }
+          </ul>
+          <div class="sum-row"><span>Subtotal</span><span>{{ cart.subtotal() | currency:'SGD':'symbol-narrow' }}</span></div>
+          <div class="sum-row"><span>Delivery</span><span>{{ cart.deliveryFee() === 0 ? 'Free' : (cart.deliveryFee() | currency:'SGD':'symbol-narrow') }}</span></div>
+          @if (cart.discount() > 0) { <div class="sum-row"><span>Discount</span><span>−{{ cart.discount() | currency:'SGD':'symbol-narrow' }}</span></div> }
+          <div class="sum-row total"><span>Total</span><span>{{ cart.total() | currency:'SGD':'symbol-narrow' }}</span></div>
+        </aside>
+      </div>
+    }
+  </div>
+</section>

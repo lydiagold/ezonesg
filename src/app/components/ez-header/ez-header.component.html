@@ -1,49 +1,87 @@
-<header class="ez-header" [class.scrolled]="isScrolled()">
-  <div class="container ez-header-inner">
+<header class="hdr">
+  <div class="container hdr-inner">
+    <button
+      class="icon-btn menu-toggle"
+      type="button"
+      [attr.aria-expanded]="menuOpen()"
+      aria-label="Toggle navigation menu"
+      (click)="toggleMenu()"
+    >
+      <span class="bars" [class.open]="menuOpen()"><span></span><span></span><span></span></span>
+    </button>
 
-    <!-- Logo -->
-    <a routerLink="/" class="ez-logo" (click)="closeMenu()">
-      <img src="assets/images/ezone-logo.png" alt="Ezone SG" class="ez-logo-img" />
+    <a class="brand" routerLink="/" (click)="closeMenu()" aria-label="EZONE home">
+      {{ brand }}
     </a>
 
-    <!-- Desktop Nav -->
-    <nav class="ez-nav-desktop">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="ez-nav-link">Home</a>
-      <a routerLink="/software" routerLinkActive="active" class="ez-nav-link">Software</a>
-      <a routerLink="/codify" routerLinkActive="active" class="ez-nav-link">Codify</a>
-      <a routerLink="/laptops" routerLinkActive="active" class="ez-nav-link">Laptops</a>
-      <a routerLink="/contact" routerLinkActive="active" class="ez-nav-link">Contact</a>
+    <nav class="nav" aria-label="Primary">
+      @for (link of links; track link.path) {
+        <a
+          [routerLink]="link.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+        >{{ link.label }}</a>
+      }
     </nav>
 
-    <!-- Actions -->
-    <div class="ez-header-actions">
-      <a routerLink="/contact" class="btn btn-ez-gold btn-sm desktop-only" (click)="closeMenu()">
-        Book a Consultation
-      </a>
-      <button
-        class="ez-hamburger"
-        [class.open]="isMenuOpen()"
-        (click)="toggleMenu()"
-        aria-label="Toggle menu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
+    <div class="actions">
+      <button class="icon-btn" type="button" aria-label="Search products" (click)="toggleSearch()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
+        </svg>
       </button>
+
+      <button
+        class="icon-btn account-btn"
+        type="button"
+        [attr.aria-label]="identity.hasValidIdentity() ? 'Your details' : 'Account'"
+        (click)="openAccount()"
+      >
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="8" r="3.5" /><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" />
+        </svg>
+        @if (identity.hasValidIdentity()) { <span class="dot" aria-hidden="true"></span> }
+      </button>
+
+      <a class="icon-btn cart-link" routerLink="/cart" aria-label="View cart">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M6 6h15l-1.5 9h-12z" /><circle cx="9" cy="20" r="1.4" /><circle cx="18" cy="20" r="1.4" /><path d="M6 6 5 3H2" />
+        </svg>
+        @if (cart.count() > 0) {
+          <span class="cart-count" aria-hidden="true">{{ cart.count() }}</span>
+        }
+        <span class="sr-only">Cart, {{ cart.count() }} items</span>
+      </a>
     </div>
   </div>
 
-  <!-- Mobile Nav -->
-  <div class="ez-nav-mobile" [class.open]="isMenuOpen()">
-    <nav>
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="ez-mobile-link" (click)="closeMenu()">Home</a>
-      <a routerLink="/software" routerLinkActive="active" class="ez-mobile-link" (click)="closeMenu()">Enterprise Software</a>
-      <a routerLink="/codify" routerLinkActive="active" class="ez-mobile-link" (click)="closeMenu()">Codify Platform</a>
-      <a routerLink="/laptops" routerLinkActive="active" class="ez-mobile-link" (click)="closeMenu()">Laptops & IT</a>
-      <a routerLink="/contact" routerLinkActive="active" class="ez-mobile-link" (click)="closeMenu()">Contact</a>
-      <a routerLink="/contact" class="btn btn-ez-gold mobile-cta" (click)="closeMenu()">
-        Book a Consultation
-      </a>
+  @if (searchOpen()) {
+    <div class="search-bar">
+      <form class="container search-form" (ngSubmit)="submitSearch()" role="search">
+        <input
+          class="input"
+          type="search"
+          name="q"
+          [(ngModel)]="query"
+          placeholder="Search iPhones, tablets, accessories…"
+          aria-label="Search products"
+          autofocus
+        />
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+    </div>
+  }
+
+  @if (menuOpen()) {
+    <nav class="mobile-nav" aria-label="Mobile">
+      @for (link of links; track link.path) {
+        <a
+          [routerLink]="link.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+          (click)="closeMenu()"
+        >{{ link.label }}</a>
+      }
     </nav>
-  </div>
+  }
 </header>

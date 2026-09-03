@@ -1,57 +1,40 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { Product } from '../models/product.model';
-import { PRODUCTS, CATEGORIES } from '../config/products.config';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ProductRepository } from '../repositories/product.repository';
+import { Product, CategorySlug } from '../models/product.model';
+import { CATEGORIES } from '../config/nav.config';
 
+/**
+ * Thin storefront-facing facade over {@link ProductRepository}. Components depend
+ * on this; the underlying repository (mock now, HTTP in Phase 2) stays hidden.
+ */
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private allProducts = signal<Product[]>(PRODUCTS);
-  private selectedCategory = signal<string>('All');
-  private searchQuery = signal<string>('');
+  private readonly repo = inject(ProductRepository);
 
   readonly categories = CATEGORIES;
 
-  readonly allProductsList = this.allProducts.asReadonly();
-
-  readonly featuredProducts = computed(() =>
-    this.allProducts().filter(p => p.featured)
-  );
-
-  readonly filteredProducts = computed(() => {
-    let products = this.allProducts();
-    const cat = this.selectedCategory();
-    const query = this.searchQuery().toLowerCase().trim();
-
-    if (cat !== 'All') {
-      products = products.filter(p => p.category === cat);
-    }
-    if (query) {
-      products = products.filter(
-        p =>
-          p.name.toLowerCase().includes(query) ||
-          p.description.toLowerCase().includes(query) ||
-          p.category.toLowerCase().includes(query)
-      );
-    }
-    return products;
-  });
-
-  readonly activeCategory = this.selectedCategory.asReadonly();
-  readonly activeSearch = this.searchQuery.asReadonly();
-
-  readonly uniqueCategories = computed(() => {
-    const cats = ['All', ...new Set(this.allProducts().map(p => p.category))];
-    return cats;
-  });
-
-  setCategory(category: string): void {
-    this.selectedCategory.set(category);
+  all(): Observable<Product[]> {
+    return this.repo.list();
   }
 
-  setSearch(query: string): void {
-    this.searchQuery.set(query);
+  byCategory(category: CategorySlug): Observable<Product[]> {
+    return this.repo.byCategory(category);
   }
 
-  getProductById(id: number): Product | undefined {
-    return this.allProducts().find(p => p.id === id);
+  bySlug(slug: string): Observable<Product | undefined> {
+    return this.repo.getBySlug(slug);
+  }
+
+  featured(): Observable<Product[]> {
+    return this.repo.featured();
+  }
+
+  search(query: string): Observable<Product[]> {
+    return this.repo.search(query);
+  }
+
+  categoryBySlug(slug: CategorySlug) {
+    return this.categories.find(c => c.slug === slug);
   }
 }

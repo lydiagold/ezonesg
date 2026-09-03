@@ -1,0 +1,116 @@
+@if (product(); as p) {
+  <section class="section">
+    <div class="container">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a routerLink="/shop">Shop</a> ›
+        <a [routerLink]="['/shop', p.category]">{{ p.category }}</a> ›
+        <span>{{ p.name }}</span>
+      </nav>
+
+      <div class="pdp">
+        <!-- Gallery -->
+        <div class="gallery">
+          <div class="gallery-main">
+            <img [src]="p.images[activeImage()].url" [alt]="p.images[activeImage()].alt || p.name" />
+          </div>
+          @if (p.images.length > 1) {
+            <div class="thumbs" role="tablist">
+              @for (im of p.images; track im.key; let i = $index) {
+                <button
+                  type="button"
+                  class="thumb"
+                  [class.active]="activeImage() === i"
+                  (click)="activeImage.set(i)"
+                  [attr.aria-label]="'View image ' + (i + 1)"
+                >
+                  <img [src]="im.url" [alt]="im.alt" />
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Buy box -->
+        <div class="buybox">
+          <span class="pcard-brand">{{ p.brand }}</span>
+          <h1>{{ p.name }}</h1>
+          <p class="lead muted">{{ p.shortDescription }}</p>
+
+          <div class="price-row">
+            <span class="price">{{ unitPrice() | currency:'SGD':'symbol-narrow' }}</span>
+            @if (oldPrice()) {
+              <span class="price-old">{{ oldPrice() | currency:'SGD':'symbol-narrow' }}</span>
+            }
+          </div>
+
+          <div class="avail">
+            @if (stock() > 0) {
+              <span class="badge badge-success">In stock</span>
+            } @else {
+              <span class="badge badge-muted">Out of stock</span>
+            }
+            @if (currentVariant(); as v) { <span class="muted sku">SKU: {{ v.sku }}</span> }
+          </div>
+
+          <!-- Variant selectors -->
+          @for (dim of dimensions(); track dim.name) {
+            <div class="dim">
+              <span class="dim-label">{{ dim.name }}</span>
+              <div class="dim-options">
+                @for (val of dim.values; track val) {
+                  <button
+                    type="button"
+                    class="chip"
+                    [class.active]="isSelected(dim.name, val)"
+                    (click)="select(dim.name, val)"
+                  >{{ val }}</button>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Quantity -->
+          <div class="dim qty-row">
+            <span class="dim-label">Quantity</span>
+            <div class="qty">
+              <button type="button" (click)="changeQty(-1)" aria-label="Decrease quantity" [disabled]="quantity() <= 1">−</button>
+              <span aria-live="polite">{{ quantity() }}</span>
+              <button type="button" (click)="changeQty(1)" aria-label="Increase quantity" [disabled]="quantity() >= stock()">+</button>
+            </div>
+          </div>
+
+          <div class="buy-actions">
+            <button class="btn btn-primary btn-lg btn-block" type="button" [disabled]="!canAdd()" (click)="addToCart()">
+              {{ justAdded() ? 'Added ✓' : 'Add to Cart' }}
+            </button>
+            <button class="btn btn-outline btn-lg btn-block" type="button" [disabled]="!canAdd()" (click)="buyNow()">
+              Buy Now
+            </button>
+          </div>
+
+          <p class="desc">{{ p.description }}</p>
+
+          <!-- Specifications -->
+          @if (specs().length) {
+            <div class="specs">
+              <h2>Specifications</h2>
+              <dl>
+                @for (s of specs(); track s[0]) {
+                  <div class="spec-row"><dt>{{ s[0] }}</dt><dd>{{ s[1] }}</dd></div>
+                }
+              </dl>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+} @else {
+  <section class="section">
+    <div class="container empty">
+      <h1>Product not found</h1>
+      <p class="muted">This product may be unavailable or the link is incorrect.</p>
+      <a class="btn btn-primary" routerLink="/shop">Back to shop</a>
+    </div>
+  </section>
+}

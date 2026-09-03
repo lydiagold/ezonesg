@@ -1,0 +1,59 @@
+<section class="section">
+  <div class="container narrow">
+    @if (order(); as o) {
+      <div class="order-head">
+        <div>
+          <h1>Order {{ o.orderReference }}</h1>
+          <p class="muted">Placed {{ o.createdAt | date:'medium' }}</p>
+        </div>
+        <span class="badge" [class.badge-success]="o.status === 'PAID' || o.status === 'DELIVERED'" [class.badge-warn]="o.status === 'PENDING_PAYMENT'" [class.badge-muted]="o.status === 'CANCELLED'">
+          {{ o.status }}
+        </span>
+      </div>
+
+      <div class="order-grid">
+        <div class="card block">
+          <h2>Items</h2>
+          <ul class="items">
+            @for (it of o.items; track it.sku) {
+              <li>
+                <img [src]="it.productImage" [alt]="it.productName" />
+                <div>
+                  <span class="it-name">{{ it.productName }}</span>
+                  @if (it.variantDescription) { <span class="muted">{{ it.variantDescription }}</span> }
+                  <span class="muted">Qty {{ it.quantity }} · {{ it.unitPrice | currency:'SGD':'symbol-narrow' }}</span>
+                </div>
+                <span class="it-line">{{ it.lineTotal | currency:'SGD':'symbol-narrow' }}</span>
+              </li>
+            }
+          </ul>
+          <div class="sum-row"><span>Subtotal</span><span>{{ o.subtotal | currency:'SGD':'symbol-narrow' }}</span></div>
+          <div class="sum-row"><span>Delivery</span><span>{{ o.deliveryFee === 0 ? 'Free' : (o.deliveryFee | currency:'SGD':'symbol-narrow') }}</span></div>
+          <div class="sum-row total"><span>Total</span><span>{{ o.total | currency:'SGD':'symbol-narrow' }}</span></div>
+        </div>
+
+        <div class="card block">
+          <h2>Delivery</h2>
+          <p>{{ o.customerName }}</p>
+          <p class="muted">{{ o.shippingAddress.line1 }}</p>
+          @if (o.shippingAddress.line2) { <p class="muted">{{ o.shippingAddress.line2 }}</p> }
+          <p class="muted">Singapore {{ o.shippingAddress.postalCode }}</p>
+          <p class="muted">{{ o.customerMobile }}</p>
+
+          <h2 class="mt">Payment</h2>
+          <div class="sum-row"><span>Status</span><span>{{ o.paymentStatus }}</span></div>
+          <div class="sum-row"><span>Provider</span><span>HitPay</span></div>
+          @if (o.paidAt) { <div class="sum-row"><span>Paid</span><span>{{ o.paidAt | date:'medium' }}</span></div> }
+        </div>
+      </div>
+
+      <a class="btn btn-outline" routerLink="/shop">Continue shopping</a>
+    } @else {
+      <div class="card empty">
+        <h1>Order not found</h1>
+        <p class="muted">We couldn't find that order in this browser. Check your confirmation email for the correct link.</p>
+        <a class="btn btn-primary" routerLink="/shop">Back to shop</a>
+      </div>
+    }
+  </div>
+</section>

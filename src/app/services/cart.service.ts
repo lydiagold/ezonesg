@@ -1,96 +1,123 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
-import { Product } from '../models/product.model';
-import { CartItem } from '../models/cart-item.model';
+import { Injectable, computed, effect, signal } from '@angular/core';
+import { CartItem, cartItemKey, lineTotal } from '../models/cart-item.model';
+import { Product, ProductVariant, effectivePrice } from '../models/product.model';
+import { deliveryFeeFor, taxFor, SETTINGS } from '../config/business.config';
 
+const CART_KEY = 'ezone_cart';
+
+/**
+ * Persistent, variant-aware guest cart backed by localStorage.
+ * No account required — guest checkout is the default.
+ */
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private cartItems = signal<CartItem[]>(this.loadFromStorage());
+  private readonly _items = signal<CartItem[]>(this.load());
 
-  readonly items = this.cartItems.asReadonly();
+  readonly items = this._items.asReadonly();
 
   readonly count = computed(() =>
-    this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
+    this._items().reduce((sum, i) => sum + i.quantity, 0)
   );
 
-  readonly total = computed(() =>
-    this.cartItems().reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  readonly subtotal = computed(() =>
+    this._items().reduce((sum, i) => sum + lineTotal(i), 0)
   );
 
-  readonly isEmpty = computed(() => this.cartItems().length === 0);
+  readonly discount = computed(() => 0);
+
+  /** Configurable tax (0 unless enabled and price-exclusive in settings). */
+  readonly tax = computed(() => taxFor(this.subtotal() - this.discount()));
+  readonly taxEnabled = SETTINGS.tax.enabled && !SETTINGS.tax.inclusive;
+  readonly taxLabel = SETTINGS.tax.label;
+
+  /** Cart total before delivery — delivery is chosen at the fulfilment step. */
+  readonly totalPreDelivery = computed(
+    () => this.subtotal() - this.discount() + this.tax()
+  );
+
+  // Retained for the existing single-page checkout (superseded by the 3-step
+  // fulfilment flow in a later increment).
+  readonly deliveryFee = computed(() => deliveryFeeFor(this.subtotal()));
+  readonly total = computed(
+    () => this.subtotal() - this.discount() + this.deliveryFee() + this.tax()
+  );
+
+  readonly isEmpty = computed(() => this._items().length === 0);
 
   constructor() {
     effect(() => {
-      localStorage.setItem('orchardroots_cart', JSON.stringify(this.cartItems()));
+      localStorage.setItem(CART_KEY, JSON.stringify(this._items()));
     });
   }
 
-  private loadFromStorage(): CartItem[] {
+  private load(): CartItem[] {
     try {
-      const stored = localStorage.getItem('orchardroots_cart');
-      return stored ? JSON.parse(stored) : [];
+      return JSON.parse(localStorage.getItem(CART_KEY) ?? '[]');
     } catch {
       return [];
     }
   }
 
-  addToCart(product: Product, quantity = 1): void {
-    const current = this.cartItems();
-    const existing = current.find(i => i.product.id === product.id);
+  add(product: Product, variant: ProductVariant, quantity = 1): void {
+    const key = cartItemKey(product.id, variant.id);
+    const items = this._items();
+    const existing = items.find(
+      i => cartItemKey(i.productId, i.variantId) === key
+    );
+
     if (existing) {
-      this.cartItems.set(
-        current.map(i =>
-          i.product.id === product.id
-            ? { ...i, quantity: i.quantity + quantity }
-            : i
-        )
-      );
-    } else {
-      this.cartItems.set([...current, { product, quantity }]);
-    }
-  }
-
-  removeFromCart(productId: number): void {
-    this.cartItems.set(this.cartItems().filter(i => i.product.id !== productId));
-  }
-
-  updateQuantity(productId: number, quantity: number): void {
-    if (quantity <= 0) {
-      this.removeFromCart(productId);
+      const next = Math.min(existing.quantity + quantity, variant.stockQuantity);
+      this.setQuantity(key, next);
       return;
     }
-    this.cartItems.set(
-      this.cartItems().map(i =>
-        i.product.id === productId ? { ...i, quantity } : i
+
+    const unitPrice = variant.priceOverride ?? effectivePrice(product);
+    const variantDescription = Object.entries(variant.attributes)
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(', ');
+
+    const item: CartItem = {
+      productId: product.id,
+      slug: product.slug,
+      variantId: variant.id,
+      name: product.name,
+      variantDescription,
+      sku: variant.sku,
+      image: product.images[0]?.url ?? '',
+      unitPrice,
+      quantity: Math.min(quantity, variant.stockQuantity),
+      maxQuantity: variant.stockQuantity,
+    };
+    this._items.set([...items, item]);
+  }
+
+  setQuantity(key: string, quantity: number): void {
+    if (quantity <= 0) {
+      this.remove(key);
+      return;
+    }
+    this._items.set(
+      this._items().map(i =>
+        cartItemKey(i.productId, i.variantId) === key
+          ? { ...i, quantity: Math.min(quantity, i.maxQuantity || quantity) }
+          : i
       )
     );
   }
 
-  clearCart(): void {
-    this.cartItems.set([]);
+  remove(key: string): void {
+    this._items.set(
+      this._items().filter(
+        i => cartItemKey(i.productId, i.variantId) !== key
+      )
+    );
   }
 
-  isInCart(productId: number): boolean {
-    return this.cartItems().some(i => i.product.id === productId);
+  clear(): void {
+    this._items.set([]);
   }
 
-  checkout(): void {
-    const items = this.cartItems();
-    if (items.length === 0) return;
-
-    let message = 'Hello OrchardRoots! I would like to place an order:\n\n';
-    items.forEach((item, index) => {
-      message += `${index + 1}. ${item.product.name} (${item.product.weight}) x${item.quantity} — SGD ${(item.product.price * item.quantity).toFixed(2)}\n`;
-    });
-    message += `\n*Total: SGD ${this.total().toFixed(2)}*\n`;
-    message += '\nName:\nDelivery Address / Pickup:\nNotes:';
-
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/6596926272?text=${encoded}`, '_blank');
-  }
-
-  orderSingleProduct(product: Product): void {
-    const message = `Hello OrchardRoots! I would like to order:\n\n${product.name} (${product.weight}) — SGD ${product.price.toFixed(2)}\n\nName:\nDelivery Address / Pickup:\nNotes:`;
-    const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/6596926272?text=${encoded}`, '_blank');
+  keyOf(item: CartItem): string {
+    return cartItemKey(item.productId, item.variantId);
   }
 }

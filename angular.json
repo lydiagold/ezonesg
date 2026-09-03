@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "nutfit-by-jk": {
+    "ezonesg": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,20 +17,28 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/nutfit-by-jk",
+            "outputPath": "dist/ezonesg",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               { "glob": "**/*", "input": "src/assets", "output": "assets" },
-              { "glob": "favicon.ico", "input": "src", "output": "" }
+              { "glob": "favicon.ico", "input": "src", "output": "" },
+              { "glob": "robots.txt", "input": "src", "output": "" },
+              { "glob": "sitemap.xml", "input": "src", "output": "" }
             ],
             "styles": ["src/styles.scss"],
             "scripts": []
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -57,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "nutfit-by-jk:build:production"
+              "buildTarget": "ezonesg:build:production"
             },
             "development": {
-              "buildTarget": "nutfit-by-jk:build:development"
+              "buildTarget": "ezonesg:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -68,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "nutfit-by-jk:build"
+            "buildTarget": "ezonesg:build"
           }
         }
       }

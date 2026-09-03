@@ -1,0 +1,29 @@
+:host { display: block; }
+
+.cat-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+.cat-tabs a {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-strong);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-mid);
+  background: var(--surface);
+}
+.cat-tabs a:hover { border-color: var(--text-mid); color: var(--text); }
+.cat-tabs a.active { background: var(--text); border-color: var(--text); color: #fff; }
+
+.empty {
+  text-align: center;
+  padding: 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.empty .btn { margin-top: 0.75rem; }

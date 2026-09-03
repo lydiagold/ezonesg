@@ -1,0 +1,28 @@
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h1>{{ heading() }}</h1>
+    </div>
+
+    <nav class="cat-tabs" aria-label="Product categories">
+      <a routerLink="/shop" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">All</a>
+      @for (c of categories; track c.slug) {
+        <a [routerLink]="c.route" routerLinkActive="active">{{ c.name }}</a>
+      }
+    </nav>
+
+    @if (state().results.length > 0) {
+      <div class="product-grid">
+        @for (p of state().results; track p.id) {
+          <app-product-card [product]="p" />
+        }
+      </div>
+    } @else {
+      <div class="empty">
+        <h3>No products found</h3>
+        <p class="muted">Try a different category or search term.</p>
+        <a class="btn btn-primary" routerLink="/shop">Browse all products</a>
+      </div>
+    }
+  </div>
+</section>

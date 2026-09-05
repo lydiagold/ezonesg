@@ -2,6 +2,8 @@ import { GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { ddb, TABLES } from '../lib/db.js';
 import { created, HttpError, parseBody } from '../lib/http.js';
 import { getConfig, DEFAULT_DELIVERY } from '../lib/store.js';
+import { getHitpayCredentials } from '../lib/secrets.js';
+import { createPaymentRequest } from '../lib/hitpay.js';
 
 // Delivery fee + free-delivery threshold are admin-configurable (settings table);
 // fall back to sensible defaults if never set. Read server-side and never trusted
@@ -31,9 +33,10 @@ function effectiveUnitPrice(product, variant) {
  * The server recomputes the authoritative total from the catalogue and validates
  * stock — the client amount is never trusted. The order is created PENDING_PAYMENT.
  *
- * NOTE: HitPay payment creation and the atomic stock decrement happen in Phase 4
- * (the verified webhook is the sole authority for the PAID transition). Until then
- * this returns a storefront return URL so the flow is exercisable end to end.
+ * The order is created PENDING_PAYMENT, then a HitPay payment request is created
+ * and the customer is redirected to HitPay to pay. Stock is decremented and the
+ * order marked PAID ONLY by the verified webhook (routes/payments.js) — never
+ * here and never by the browser redirect.
  */
 export async function checkout(event, storefrontOrigin) {
   const body = parseBody(event);
@@ -117,8 +120,43 @@ export async function checkout(event, storefrontOrigin) {
     ConditionExpression: 'attribute_not_exists(orderReference)',
   }));
 
-  const paymentUrl = `${storefrontOrigin}/checkout/success?ref=${orderReference}`;
-  return created({ orderReference, paymentUrl });
+  // Create the HitPay payment request and hand the customer its hosted URL.
+  const { apiKey } = await getHitpayCredentials();
+  if (!apiKey) {
+    // Payments not configured yet — fail clearly rather than silently "succeed".
+    throw new HttpError(503, 'Payments are not configured. Please try again shortly.');
+  }
+
+  const apiHost = event.requestContext?.domainName;
+  const webhookUrl = `https://${apiHost}/api/payments/webhook`;
+  const redirectUrl = `${storefrontOrigin}/checkout/success?ref=${encodeURIComponent(orderReference)}`;
+
+  let payment;
+  try {
+    payment = await createPaymentRequest(apiKey, {
+      amount: total,
+      currency: 'SGD',
+      email: customerEmail,
+      name: customerName,
+      referenceNumber: orderReference,
+      redirectUrl,
+      webhookUrl,
+      purpose: `EZONE order ${orderReference}`,
+    });
+  } catch (err) {
+    console.error('HitPay payment creation failed:', err.message);
+    throw new HttpError(502, 'Could not start payment. Please try again.');
+  }
+
+  // Record the HitPay payment-request id for reconciliation.
+  await ddb.send(new UpdateCommand({
+    TableName: TABLES.orders,
+    Key: { orderReference },
+    UpdateExpression: 'SET paymentRequestId = :prid, updatedAt = :now',
+    ExpressionAttributeValues: { ':prid': payment.id, ':now': new Date().toISOString() },
+  }));
+
+  return created({ orderReference, paymentUrl: payment.url });
 }
 
 /** Gap-free sequential reference via an atomic counter in the settings table. */

@@ -27,17 +27,20 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      PRODUCTS_TABLE    = aws_dynamodb_table.products.name
-      CATEGORIES_TABLE  = aws_dynamodb_table.categories.name
-      ORDERS_TABLE      = aws_dynamodb_table.orders.name
-      PAYMENTS_TABLE    = aws_dynamodb_table.payments.name
-      SETTINGS_TABLE    = aws_dynamodb_table.settings.name
-      AUDIT_TABLE       = aws_dynamodb_table.audit.name
-      IMAGES_BUCKET     = aws_s3_bucket.images.bucket
-      HITPAY_SECRET_ID  = aws_secretsmanager_secret.hitpay.name
-      MAX_UPLOAD_BYTES  = tostring(var.max_upload_bytes)
-      COGNITO_GROUP     = aws_cognito_user_group.master_admin.name
-      STOREFRONT_ORIGIN = var.storefront_origin
+      PRODUCTS_TABLE     = aws_dynamodb_table.products.name
+      CATEGORIES_TABLE   = aws_dynamodb_table.categories.name
+      ORDERS_TABLE       = aws_dynamodb_table.orders.name
+      PAYMENTS_TABLE     = aws_dynamodb_table.payments.name
+      SETTINGS_TABLE     = aws_dynamodb_table.settings.name
+      AUDIT_TABLE        = aws_dynamodb_table.audit.name
+      IMAGES_BUCKET      = aws_s3_bucket.images.bucket
+      HITPAY_SECRET_ID   = aws_secretsmanager_secret.hitpay.name
+      HITPAY_API_BASE    = var.hitpay_api_base
+      HITPAY_ENVIRONMENT = var.hitpay_environment
+      PUBLIC_API_BASE    = aws_apigatewayv2_api.http.api_endpoint
+      MAX_UPLOAD_BYTES   = tostring(var.max_upload_bytes)
+      COGNITO_GROUP      = aws_cognito_user_group.master_admin.name
+      STOREFRONT_ORIGIN  = var.storefront_origin
       # Allow the storefront + any extra origins (Amplify preview, localhost) so
       # the admin SPA can call the API with credentials during development too.
       CORS_ORIGIN = join(",", local.cors_origins)

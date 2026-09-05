@@ -3,6 +3,7 @@ import { listCategories } from './routes/categories.js';
 import { checkout } from './routes/checkout.js';
 import { getOrder } from './routes/order.js';
 import { getPublicHomepage } from './routes/homepage.js';
+import { handleWebhook } from './routes/payments.js';
 import { handleAdmin } from './routes/admin/index.js';
 import { ok, notFound, serverError, HttpError, json } from './lib/http.js';
 
@@ -41,6 +42,9 @@ export async function handler(event) {
     if (method === 'GET' && orderMatch) return await getOrder(decodeURIComponent(orderMatch[1]));
 
     if (method === 'POST' && path === '/api/checkout') return await checkout(event, STOREFRONT_ORIGIN);
+
+    // HitPay server-to-server webhook (public, but HMAC-verified inside).
+    if (method === 'POST' && path === '/api/payments/webhook') return await handleWebhook(event);
 
     if (path === '/api/health') return ok({ status: 'ok' });
 

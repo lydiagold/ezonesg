@@ -48,3 +48,20 @@ variable "max_upload_bytes" {
   type        = number
   default     = 5242880 # 5 MB
 }
+
+variable "hitpay_api_base" {
+  description = "HitPay API base URL. Sandbox for testing, live for real money."
+  type        = string
+  default     = "https://api.sandbox.hit-pay.com"
+
+  validation {
+    condition     = contains(["https://api.sandbox.hit-pay.com", "https://api.hit-pay.com"], var.hitpay_api_base)
+    error_message = "hitpay_api_base must be the HitPay sandbox or live base URL."
+  }
+}
+
+variable "hitpay_environment" {
+  description = "Label shown in admin Payment Settings (sandbox|live). Must match hitpay_api_base."
+  type        = string
+  default     = "sandbox"
+}

@@ -1,6 +1,24 @@
 import { QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { ddb, TABLES } from '../lib/db.js';
 import { ok, notFound } from '../lib/http.js';
+import { presignGet } from '../lib/s3.js';
+
+// Product images live as private S3 objects (key). We never persist a presigned
+// URL (it expires); instead we mint a fresh, longer-lived GET URL per response
+// from the stored key — same approach as the public homepage route. Seed/local
+// asset paths (assets/...) are passed through untouched.
+const IMAGE_TTL = 6 * 3600;
+
+async function withFreshImageUrls(product) {
+  if (!product?.images?.length) return product;
+  const images = await Promise.all(product.images.map(async img => {
+    if (img.key && !img.key.startsWith('assets/')) {
+      return { ...img, url: await presignGet(img.key, IMAGE_TTL) };
+    }
+    return img;
+  }));
+  return { ...product, images };
+}
 
 /** GET /api/products?category=phones&q=iphone — list active products. */
 export async function listProducts(event) {
@@ -32,6 +50,7 @@ export async function listProducts(event) {
     );
   }
 
+  items = await Promise.all(items.map(withFreshImageUrls));
   return ok(items);
 }
 
@@ -46,5 +65,5 @@ export async function getProductBySlug(slug) {
   }));
   const item = res.Items?.[0];
   if (!item || item.active === false) return notFound('Product not found');
-  return ok(item);
+  return ok(await withFreshImageUrls(item));
 }

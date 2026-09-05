@@ -25,6 +25,16 @@ async function readSecret() {
   }
 }
 
+/**
+ * INTERNAL ONLY — the raw HitPay credentials for server-to-server calls and
+ * webhook verification. NEVER return this from an HTTP handler; only the boolean
+ * status (hitpayStatus) is ever exposed to clients.
+ */
+export async function getHitpayCredentials() {
+  const s = await readSecret();
+  return { apiKey: s.apiKey || '', webhookSalt: s.webhookSalt || '' };
+}
+
 /** Safe status only — booleans, never the secret material. */
 export async function hitpayStatus() {
   const s = await readSecret();

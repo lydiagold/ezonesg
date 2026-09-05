@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CognitoAuthService } from '../../auth/cognito-auth.service';
 
-type Mode = 'signin' | 'newPassword' | 'mfa' | 'forgot' | 'forgotConfirm';
+type Mode = 'signin' | 'newPassword' | 'mfa' | 'mfaSetup' | 'forgot' | 'forgotConfirm';
 
 /**
  * EZONE-branded admin login. Drives the Cognito flows: sign-in, first-login
@@ -70,6 +70,27 @@ type Mode = 'signin' | 'newPassword' | 'mfa' | 'forgot' | 'forgotConfirm';
           <button class="btn btn-primary btn-block btn-lg" type="submit" [disabled]="busy()">Verify</button>
         </form>
 
+        <!-- First-time TOTP enrolment (MFA now required) -->
+        <form *ngIf="mode() === 'mfaSetup'" (ngSubmit)="submitEnroll()">
+          <p class="muted" style="margin-bottom:0.75rem">
+            Set up two-factor authentication. Add EZONE to Google Authenticator, Authy or 1Password,
+            then enter the 6-digit code to finish.
+          </p>
+          <div class="field">
+            <label>Setup key (enter manually in your authenticator app)</label>
+            <input class="input" type="text" [value]="mfaSecret()" readonly (focus)="$any($event.target).select()"
+                   style="font-family:monospace;letter-spacing:1px" />
+            <p class="field-error" style="color:var(--ez-text-muted)">Account: {{ email }} · Issuer: EZONE Admin</p>
+          </div>
+          <div class="field">
+            <label>Authentication code</label>
+            <input class="input" type="text" inputmode="numeric" name="scode" [(ngModel)]="code" autocomplete="one-time-code" required />
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" type="submit" [disabled]="busy()">
+            {{ busy() ? 'Verifying…' : 'Verify & enable 2FA' }}
+          </button>
+        </form>
+
         <!-- Forgot: request code -->
         <form *ngIf="mode() === 'forgot'" (ngSubmit)="requestReset()">
           <p class="muted" style="margin-bottom:1rem">We'll email you a reset code.</p>
@@ -112,6 +133,7 @@ export class AdminLoginComponent {
   readonly busy = signal(false);
   readonly error = signal('');
   readonly notice = signal('');
+  readonly mfaSecret = signal('');
 
   switch(mode: Mode, ev?: Event) {
     ev?.preventDefault();
@@ -125,15 +147,25 @@ export class AdminLoginComponent {
       if (res.status === 'OK') return this.done();
       if (res.status === 'NEW_PASSWORD_REQUIRED') this.switch('newPassword');
       if (res.status === 'MFA') this.switch('mfa');
+      if (res.status === 'MFA_SETUP') { this.mfaSecret.set(res.secret ?? ''); this.switch('mfaSetup'); }
     });
   }
 
   async setNewPassword() {
-    await this.run(async () => { await this.auth.completeNewPassword(this.newPassword); this.done(); });
+    await this.run(async () => {
+      const res = await this.auth.completeNewPassword(this.newPassword);
+      // If MFA is enforced, completing the new password immediately asks for setup.
+      if (res?.status === 'MFA_SETUP') { this.mfaSecret.set(res.secret ?? ''); this.switch('mfaSetup'); return; }
+      this.done();
+    });
   }
 
   async submitMfa() {
     await this.run(async () => { await this.auth.sendMfaCode(this.code.trim()); this.done(); });
+  }
+
+  async submitEnroll() {
+    await this.run(async () => { await this.auth.enrollTotp(this.code.trim()); this.done(); });
   }
 
   async requestReset() {

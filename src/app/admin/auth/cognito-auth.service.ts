@@ -46,9 +46,11 @@ export class CognitoAuthService {
    * Attempt sign-in. Resolves to:
    *  - { status: 'OK' } on success
    *  - { status: 'NEW_PASSWORD_REQUIRED' } → call completeNewPassword()
-   *  - { status: 'MFA' } → call sendMfaCode()
+   *  - { status: 'MFA' } → call sendMfaCode() (existing TOTP device)
+   *  - { status: 'MFA_SETUP', secret } → show the secret, then call enrollTotp()
+   *    (first login after MFA is enforced, before a device is registered)
    */
-  signIn(email: string, password: string): Promise<{ status: 'OK' | 'NEW_PASSWORD_REQUIRED' | 'MFA' }> {
+  signIn(email: string, password: string): Promise<{ status: 'OK' | 'NEW_PASSWORD_REQUIRED' | 'MFA' | 'MFA_SETUP'; secret?: string }> {
     this.ensureConfigured();
     const user = this.cognitoUser(email);
     const auth = new AuthenticationDetails({ Username: email, Password: password });
@@ -67,18 +69,60 @@ export class CognitoAuthService {
         },
         totpRequired: () => { this.challengeUser = user; resolve({ status: 'MFA' }); },
         mfaRequired: () => { this.challengeUser = user; resolve({ status: 'MFA' }); },
+        // Fired when MFA is required but the user has no device yet: begin TOTP
+        // association and hand the secret to the UI to display for enrolment.
+        mfaSetup: () => {
+          this.challengeUser = user;
+          user.associateSoftwareToken({
+            associateSecretCode: (secret: string) => resolve({ status: 'MFA_SETUP', secret }),
+            onFailure: (err: unknown) => reject(normalizeError(err)),
+          });
+        },
       });
     });
   }
 
-  /** Complete the first-login forced password change. */
-  completeNewPassword(newPassword: string): Promise<void> {
-    if (!this.challengeUser) return Promise.reject(new Error('No password challenge in progress'));
+  /**
+   * Finish first-time TOTP enrolment: verify the 6-digit code from the
+   * authenticator app. On success the device is registered as the preferred MFA
+   * and the user is signed in; every later login then requires the code.
+   */
+  enrollTotp(code: string, deviceName = 'EZONE Admin'): Promise<void> {
+    if (!this.challengeUser) return Promise.reject(new Error('No MFA setup in progress'));
     return new Promise((resolve, reject) => {
-      this.challengeUser!.completeNewPasswordChallenge(newPassword, this.userAttributes, {
+      this.challengeUser!.verifySoftwareToken(code.trim(), deviceName, {
         onSuccess: session => { this.onSession(session); this.challengeUser = null; resolve(); },
         onFailure: err => reject(normalizeError(err)),
       });
+    });
+  }
+
+  /** The otpauth:// URI for QR/manual entry, given the associated secret. */
+  otpauthUri(secret: string, email: string): string {
+    const issuer = 'EZONE Admin';
+    const label = encodeURIComponent(`${issuer}:${email}`);
+    return `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent(issuer)}`;
+  }
+
+  /**
+   * Complete the first-login forced password change. If MFA is enforced, Cognito
+   * follows up with an MFA setup challenge — resolve { status: 'MFA_SETUP', secret }
+   * so the caller can show enrolment; otherwise { status: 'OK' }.
+   */
+  completeNewPassword(newPassword: string): Promise<{ status: 'OK' | 'MFA_SETUP'; secret?: string }> {
+    if (!this.challengeUser) return Promise.reject(new Error('No password challenge in progress'));
+    return new Promise((resolve, reject) => {
+      this.challengeUser!.completeNewPasswordChallenge(newPassword, this.userAttributes, {
+        onSuccess: (session: CognitoUserSession) => { this.onSession(session); this.challengeUser = null; resolve({ status: 'OK' }); },
+        onFailure: (err: unknown) => reject(normalizeError(err)),
+        mfaSetup: () => {
+          this.challengeUser!.associateSoftwareToken({
+            associateSecretCode: (secret: string) => resolve({ status: 'MFA_SETUP', secret }),
+            onFailure: (err: unknown) => reject(normalizeError(err)),
+          });
+        },
+        totpRequired: () => resolve({ status: 'OK' }), // existing device — caller re-signs
+      } as any);
     });
   }
 

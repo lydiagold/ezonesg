@@ -25,9 +25,11 @@ resource "aws_cognito_user_pool" "admin" {
     temporary_password_validity_days = 7
   }
 
-  # Free TOTP (authenticator app) MFA. OPTIONAL so the initial login works before
-  # the admin enrols a device; strongly recommended to enforce before go-live.
-  mfa_configuration = "OPTIONAL"
+  # Free TOTP (authenticator app) MFA, REQUIRED for every admin login. On the
+  # first login after enforcement Cognito issues an MFA_SETUP challenge; the
+  # custom login handles enrolment (associate + verify software token). SMS is
+  # intentionally not enabled (no per-message cost, no phone dependency).
+  mfa_configuration = "ON"
   software_token_mfa_configuration {
     enabled = true
   }
